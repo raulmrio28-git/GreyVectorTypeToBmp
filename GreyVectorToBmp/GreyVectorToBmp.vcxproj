@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClCompile Include="GreyBitCodec.c" />
     <ClCompile Include="GreyBitSystem.c" />
+    <ClCompile Include="GreyVectorFile.c" />
     <ClCompile Include="GreyVectorToBmp.cpp" />
     <ClCompile Include="UnicodeSection.c" />
   </ItemGroup>
@@ -160,6 +161,7 @@
     <ClInclude Include="GreyBitCodec.h" />
     <ClInclude Include="GreyBitSystem.h" />
     <ClInclude Include="GreyBitType.h" />
+    <ClInclude Include="GreyVectorFile.h" />
     <ClInclude Include="UnicodeSection.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

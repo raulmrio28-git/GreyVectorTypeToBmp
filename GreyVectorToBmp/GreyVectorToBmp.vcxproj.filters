@@ -27,6 +27,9 @@
     <ClCompile Include="GreyBitCodec.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GreyVectorFile.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GreyBitCodec.h">
@@ -39,6 +42,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UnicodeSection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GreyVectorFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
