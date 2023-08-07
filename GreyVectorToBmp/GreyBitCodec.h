@@ -1,18 +1,27 @@
 #ifndef GREYBITCODEC_H_
 #define GREYBITCODEC_H_
 #include "GreyBitType.h"
+#include "GreyBitSystem.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+typedef struct _GB_FormatRec GB_FormatRec, *GB_Format;
+
+typedef struct _GB_LibraryRec
+{
+	GB_Memory gbMem;
+	GB_Format gbFormatHeader;
+} GB_LibraryRec, *GB_Library;
+
 typedef struct _GB_DecoderRec GB_DecoderRec, *GB_Decoder;
 
-typedef GB_INT32   (*GB_SETPARAM)(GB_Decoder decoder, void *pParam);
-typedef GB_INT32   (*GB_GETCOUNT)(GB_Decoder decoder);
-typedef GB_INT32   (*GB_GETWIDTH)(GB_Decoder decoder, GB_UINT32 nCode, GB_INT16 nSize);
-typedef GB_INT32   (*GB_DECODE)(GB_Decoder decoder, GB_UINT32 nCode, GB_DataRec *pData, GB_INT16 nSize);
-typedef void	   (*GB_DONE)(GB_Decoder decoder);
+typedef GB_INT32	(*GB_SETPARAM)(GB_Decoder decoder, void *pParam);
+typedef GB_INT32	(*GB_GETCOUNT)(GB_Decoder decoder);
+typedef GB_INT32	(*GB_GETWIDTH)(GB_Decoder decoder, GB_UINT32 nCode, GB_INT16 nSize);
+typedef GB_INT32	(*GB_DECODE)(GB_Decoder decoder, GB_UINT32 nCode, GB_Data pData, GB_INT16 nSize);
+typedef void		(*GB_DONE)(GB_Decoder decoder);
 
 struct _GB_DecoderRec
 {
@@ -23,10 +32,31 @@ struct _GB_DecoderRec
   GB_DONE done;
 };
 
+typedef struct _GB_LoaderRec GB_LoaderRec, *GB_Loader;
+
+struct _GB_LoaderRec
+{
+	GB_Library gbLibrary;
+	GB_Memory gbMem;
+	GB_Stream gbStream;
+	GB_Decoder gbDecoder;
+};
+
+typedef GB_BOOL(*GB_PROBE)(GB_Stream stream);
+typedef GB_Decoder(*GB_DECODERNEW)(GB_Loader loader, GB_Stream stream);
+
+struct _GB_FormatRec
+{
+	GB_Format next;
+	GB_CHAR tag[4];
+	GB_PROBE probe;
+	GB_DECODERNEW decodernew;
+};
+
 extern GB_INT32	GreyBit_Decoder_SetParam(GB_Decoder decoder, void *pParam);
 extern GB_INT32	GreyBit_Decoder_GetCount(GB_Decoder decoder);
 extern GB_INT32	GreyBit_Decoder_GetWidth(GB_Decoder decoder, GB_UINT32 nCode, GB_INT16 nSize);
-extern GB_INT32	GreyBit_Decoder_Decode(GB_Decoder decoder, GB_UINT32 nCode, GB_DataRec *pData, GB_INT16 nSize);
+extern GB_INT32	GreyBit_Decoder_Decode(GB_Decoder decoder, GB_UINT32 nCode, GB_Data pData, GB_INT16 nSize);
 extern void		GreyBit_Decoder_Done(GB_Decoder decoder);
 
 #ifdef __cplusplus
