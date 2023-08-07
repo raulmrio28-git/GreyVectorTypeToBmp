@@ -7,6 +7,11 @@
 extern "C" {
 #endif
 
+typedef struct tagSECTIONOINFO
+{
+	GB_UINT16 gbSectionOff[146];
+} SECTIONOINFO;
+
 typedef struct _GB_FormatRec GB_FormatRec, *GB_Format;
 
 typedef struct _GB_LibraryRec

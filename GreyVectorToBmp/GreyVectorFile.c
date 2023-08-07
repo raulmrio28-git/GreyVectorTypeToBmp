@@ -1,3 +1,4 @@
+#include "GreyVectorFileDecoder.h"
 #include "GreyVectorFile.h"
 
 GB_BOOL GreyVectorFile_Probe(GB_Stream stream)

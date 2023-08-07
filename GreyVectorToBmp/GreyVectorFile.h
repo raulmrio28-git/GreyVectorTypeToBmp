@@ -1,9 +1,6 @@
+#ifndef GREYVECTORFILE_H_
+#define GREYVECTORFILE_H_
 #include "GreyBitType.h"
 #include "GreyBitSystem.h"
 #include "GreyBitCodec.h"
-
-typedef struct tagGREYVECTORFILEHEADER
-{
-  GB_CHAR gbfTag[4];
-  GB_UINT32 gbfSize;
-} GREYVECTORFILEHEADER;
+#endif //GREYVECTORFILE_H_

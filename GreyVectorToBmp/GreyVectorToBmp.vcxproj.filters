@@ -18,9 +18,6 @@
     <ClCompile Include="GreyVectorToBmp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GreyBitSystem.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="UnicodeSection.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -28,6 +25,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GreyVectorFile.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GreyVectorFileDecoder.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GreyBitSystemMSVC.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -45,6 +48,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GreyVectorFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GreyVectorFileDecoder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
