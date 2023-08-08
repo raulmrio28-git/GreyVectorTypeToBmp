@@ -2,6 +2,7 @@
 
 GVF_Outline GreyVector_Outline_New(GB_Library library, GB_INT16 n_contours, GB_INT16 n_points)
 {
+	GB_BYTE *pBase;
 	GVF_Outline outline;
 
 	outline = (GVF_Outline)GreyBit_Malloc(library->gbMem, n_contours + sizeof(GVF_PointRec) * n_points + sizeof(GVF_OutlineRec));
@@ -9,10 +10,9 @@ GVF_Outline GreyVector_Outline_New(GB_Library library, GB_INT16 n_contours, GB_I
 	{
 		outline->n_contours = n_contours;
 		outline->n_points = n_points;
-		outline[1].n_contours = n_contours;
-		outline[1].n_points = n_points;
-		outline->contours = (GVF_Point)outline + sizeof(GVF_OutlineRec);
-		outline->points = (GVF_Point)outline + sizeof(GVF_OutlineRec) + n_contours;
+		pBase = (GB_BYTE*)outline + sizeof(GVF_OutlineRec);
+		outline->contours = pBase;
+		outline->points = pBase + n_contours;
 	}
 	return outline;
 }
@@ -36,7 +36,7 @@ GVF_Outline GreyVector_Outline_Clone(GB_Library library, GVF_Outline source)
 
 GB_INT32 GreyVector_Outline_GetSizeEx(GB_BYTE n_contours, GB_BYTE n_points)
 {
-	return n_contours + sizeof(GVF_PointRec) * n_points;
+	return n_contours + sizeof(GVF_PointRec) * n_points + sizeof(GVF_OutlineRec);
 }
 
 GVF_Outline GreyVector_Outline_GetData(GVF_Outline outline)

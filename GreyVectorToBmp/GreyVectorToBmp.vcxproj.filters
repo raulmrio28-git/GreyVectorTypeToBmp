@@ -39,6 +39,12 @@
     <ClCompile Include="GreyVectorCommon.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GreyBitLoader.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GreyBitType.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GreyBitCodec.h">

@@ -99,4 +99,7 @@ typedef struct _GVF_EncoderRec
 #define SET_RAM(d) ((d)|RAM_MASK)
 #define GET_INDEX(d) ((d)&(~RAM_MASK))
 
+extern GB_Format GreyVectorFile_Format_New(GB_Library library);
+extern GB_BOOL GreyVectorFile_Probe(GB_Stream stream);
+
 #endif //GREYVECTORFILE_H_
