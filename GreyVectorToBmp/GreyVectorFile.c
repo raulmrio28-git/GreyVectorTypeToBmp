@@ -8,7 +8,7 @@ GB_BOOL GreyVectorFile_Probe(GB_Stream stream)
 
   GreyBit_Stream_Seek(stream, 0);
   GreyBit_Stream_Read(stream, (GB_BYTE *)&fileHeader, 8);
-  return GB_MEMCMP("gvtf", fileHeader.gbfTag, 4) != 0;
+  return fileHeader.gbfTag[0] == 'g' && fileHeader.gbfTag[1] == 'v' && fileHeader.gbfTag[2] == 't' && fileHeader.gbfTag[3] == 'f';
 }
 
 GB_Format GreyVectorFile_Format_New(GB_Library library)

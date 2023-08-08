@@ -178,7 +178,7 @@ GB_INT32 GreyVectorFile_Decoder_Decode(GB_Decoder decoder, GB_UINT32 nCode, GB_D
 	nWidth = GreyVectorFile_Decoder_GetWidth(decoder, nCode, nSize);
 	if (!nWidth)
 		return -1;
-	if (IS_INRAM(Offset))
+	if (!IS_INRAM(Offset))
 	{
 		GreyBit_Stream_Seek(me->gbStream, me->gbInfoHeader.gbiOffGreyBits + me->gbOffDataBits + Offset);
 		GreyBit_Stream_Read(me->gbStream, (GB_BYTE*)&Lenght, 2);

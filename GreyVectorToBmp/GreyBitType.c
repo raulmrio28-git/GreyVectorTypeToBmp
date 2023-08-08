@@ -28,7 +28,7 @@ GB_Format GreyBitType_Format_Init(GB_Library library)
 	return library->gbFormatHeader;
 }
 
-void GreyBit_Format_Done(GB_FormatRec *format, GB_MemoryRec *mem)
+void GreyBit_Format_Done(GB_Format format, GB_Memory mem)
 {
 	GreyBit_Free(mem, format);
 }
@@ -77,15 +77,15 @@ GB_Outline GreyBitType_Outline_New(GBHANDLE library, GB_INT16 n_contours, GB_INT
 	GB_Outline outline; 
 	GB_Library me = (GB_Library)library;
 
-	outline = (GB_Outline)GreyBit_Malloc(me->gbMem, sizeof(GB_OutlineRec) + n_points*sizeof(GB_PointRec) + n_points + n_contours* sizeof(GB_INT16));
+	outline = (GB_Outline)GreyBit_Malloc(me->gbMem, 5 * n_points + 2 * n_contours + sizeof(GB_OutlineRec)+2);
 	if (outline)
 	{
 		outline->n_contours = n_contours;
 		outline->n_points = n_points;
-		pBase = (GB_BYTE*)outline + sizeof(GB_OutlineRec);
-		outline->contours = pBase;
-		outline->points = pBase + n_contours * sizeof(GB_INT16);
-		outline->tags = pBase + n_contours * sizeof(GB_INT16) + n_points * sizeof(GB_PointRec);
+		outline->contours = &outline[1].n_contours;
+		pBase = (GB_BYTE *)(&outline[1].n_contours + n_contours);
+		outline->points = (GB_Point)pBase;
+		outline->tags = &pBase[4 * n_points];
 	}
 	return outline;
 }
@@ -146,7 +146,7 @@ int GreyBitType_Outline_Remove(GB_Outline outline, GB_INT16 idx)
 
 GB_INT32 GreyBitType_Outline_GetSizeEx(GB_INT16 n_contours, GB_INT16 n_points)
 {
-	return sizeof(GB_OutlineRec) + n_points * sizeof(GB_PointRec) + n_points + n_contours * sizeof(GB_INT16);
+	return 5 * n_points + 2 * n_contours + sizeof(GB_OutlineRec) + 2;
 }
 
 GB_INT32 GreyBitType_Outline_GetSize(GB_Outline outline)
@@ -178,7 +178,7 @@ void GreyBitType_Outline_Done(GBHANDLE library, GB_Outline outline)
 	GreyBit_Free(me->gbMem, outline);
 }
 
-GB_Decoder GreyBit_Format_DecoderNew(GB_FormatRec *format, GB_LoaderRec *loader, GB_StreamRec *stream)
+GB_Decoder GreyBit_Format_DecoderNew(GB_Format format, GB_Loader loader, GB_Stream stream)
 {
 	GB_Decoder result; 
 
@@ -189,7 +189,7 @@ GB_Decoder GreyBit_Format_DecoderNew(GB_FormatRec *format, GB_LoaderRec *loader,
 	return result;
 }
 
-int GreyBit_Format_Probe(GB_FormatRec *format, GB_StreamRec *stream)
+int GreyBit_Format_Probe(GB_Format format, GB_Stream stream)
 {
 	int result;
 

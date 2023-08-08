@@ -45,6 +45,12 @@
     <ClCompile Include="GreyBitType.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GreyBitLayout.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GreyBitRaster.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GreyBitCodec.h">
@@ -69,6 +75,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GreyBitType_Def.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GreyBitRaster.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

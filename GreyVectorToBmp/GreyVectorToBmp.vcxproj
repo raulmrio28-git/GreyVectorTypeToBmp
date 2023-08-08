@@ -152,7 +152,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="GreyBitCodec.c" />
+    <ClCompile Include="GreyBitLayout.c" />
     <ClCompile Include="GreyBitLoader.c" />
+    <ClCompile Include="GreyBitRaster.c" />
     <ClCompile Include="GreyBitSystem.c" />
     <ClCompile Include="GreyBitSystemMSVC.c" />
     <ClCompile Include="GreyBitType.c" />
@@ -164,6 +166,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GreyBitCodec.h" />
+    <ClInclude Include="GreyBitRaster.h" />
     <ClInclude Include="GreyBitSystem.h" />
     <ClInclude Include="GreyBitType.h" />
     <ClInclude Include="GreyBitType_Def.h" />

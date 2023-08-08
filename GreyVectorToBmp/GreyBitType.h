@@ -50,6 +50,7 @@ typedef struct  _GB_BitmapRec
 {
     GB_INT16         width;
     GB_INT16         height;
+	GB_INT16         horioff;
     GB_INT16         pitch;
     GB_INT16         bitcount;
     GB_BYTE         *buffer;

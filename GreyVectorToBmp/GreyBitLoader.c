@@ -7,6 +7,7 @@ extern GB_Stream GreyBit_Stream_New(const char* filepathname, char bcreate);
 extern GB_Stream GreyBit_Stream_New_Memory(const void *pBuf, GB_INT32 nBufSize);
 extern int GreyBit_Format_Probe(GB_FormatRec *format, GB_StreamRec *stream);
 extern GB_Decoder GreyBit_Format_DecoderNew(GB_FormatRec *format, GB_LoaderRec *loader, GB_StreamRec *stream);
+
 GB_Decoder GreyBitType_Loader_Probe(GB_Library library, GB_Loader loader)
 {
 	GB_Decoder decoder;
@@ -17,7 +18,7 @@ GB_Decoder GreyBitType_Loader_Probe(GB_Library library, GB_Loader loader)
 	while (format)
 	{
 		if (GreyBit_Format_Probe(format, loader->gbStream))
-			return (GB_Decoder)GreyBit_Format_DecoderNew(format, loader, loader->gbStream);
+			return GreyBit_Format_DecoderNew(format, loader, loader->gbStream);
 		format = format->next;
 	}
 	return decoder;

@@ -84,6 +84,7 @@ GB_INT32 GreyBit_Labs_Sys(GB_INT32 i)
 void *GreyBit_Malloc_Sys(GB_INT32 size)
 {
 	void *p = malloc(size);
+	GreyBit_Memset_Sys(p, 0, size);
 	return p;
 }
 
@@ -128,7 +129,8 @@ CLEAN_UP:
 GB_INT32 GreyBit_Read_Sys(GB_IOHandler f, GB_BYTE *p, GB_INT32 size)
 {
 	GB_SysFile handle = (GB_SysFile)f;
-	return fread((void*)p, size, 1, handle->fp);
+	fread((void*)p, size, 1, handle->fp);
+	return size;
 }
 
 GB_INT32 GreyBit_Write_Sys(GB_IOHandler f, GB_BYTE *p, GB_INT32 size)
