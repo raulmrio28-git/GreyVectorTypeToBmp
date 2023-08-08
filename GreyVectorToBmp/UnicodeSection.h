@@ -6,6 +6,8 @@
 extern "C" {
 #endif
 
+#define	UNICODE_SECTION_NUM 146
+
 typedef struct tagUNICODESECTION
 {
 	GB_UINT16 nMinCode;

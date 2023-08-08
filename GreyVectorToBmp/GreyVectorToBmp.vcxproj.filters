@@ -33,12 +33,15 @@
     <ClCompile Include="GreyBitSystemMSVC.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GreyBitSystem.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GreyVectorCommon.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GreyBitCodec.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GreyBitSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GreyBitType.h">
@@ -51,6 +54,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GreyVectorFileDecoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GreyBitSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GreyVectorCommon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GreyBitType_Def.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

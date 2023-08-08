@@ -1,5 +1,6 @@
 #include "UnicodeSection.h"
 #include "GreyBitSystem.h"
+#include "GreyVectorCommon.h"
 #include "GreyVectorFileDecoder.h"
 
 GB_UINT32 GreyVectorFile_Decoder_GetDataOffset(GVF_Decoder me, GB_UINT32 nCode)
@@ -76,6 +77,27 @@ void GreyVectorFile_Decoder_ClearCache(GVF_Decoder me)
 	}
 }
 
+GB_INT32 GreyVectorFile_Decoder_InfoInit(GVF_Decoder me, GB_INT16 nMaxWidth, GB_INT16 nHeight, GB_INT16 nMaxPoints, GB_INT16 nMaxContours)
+{
+	me->gbOutline = GreyBitType_Outline_New(me->gbLibrary, nMaxContours, nMaxPoints);
+	me->nBuffSize = GreyVector_Outline_GetSizeEx(nMaxContours, nMaxPoints) + 12;
+	me->pBuff = (GB_BYTE *)GreyBit_Malloc(me->gbMem, me->nBuffSize);
+	return 0;
+}
+
+GB_INT32 GreyVectorFile_Decoder_ReadHeader(GVF_Decoder me)
+{
+	GreyBit_Stream_Seek(me->gbStream, 0);
+	if (GreyBit_Stream_Read(me->gbStream, (GB_BYTE*)&me->gbFileHeader, 8) != 8)
+		return -1;
+	if (me->gbFileHeader.gbfSize != me->gbStream->size)
+		return -1;
+	GreyBit_Stream_Read(me->gbStream, (GB_BYTE*)&me->gbInfoHeader, 612);
+	me->nItemCount = me->gbInfoHeader.gbiCount;
+	GreyVectorFile_Decoder_InfoInit(me, me->gbInfoHeader.gbiWidth, me->gbInfoHeader.gbiHeight, me->gbInfoHeader.gbiMaxPoints, me->gbInfoHeader.gbiMaxContours);
+	return 0;
+}
+
 GB_INT32 GreyVectorFile_Decoder_Init(GVF_Decoder me)
 {
 	int nDataSize;
@@ -93,27 +115,6 @@ GB_INT32 GreyVectorFile_Decoder_Init(GVF_Decoder me)
 	me->gbOffsetTable = (GB_UINT32 *)GreyBit_Malloc(me->gbMem, nDataSizea);
 	GreyBit_Stream_Seek(me->gbStream, me->gbInfoHeader.gbiOffsetTabOff + me->gbOffDataBits);
 	GreyBit_Stream_Read(me->gbStream, (GB_BYTE*)me->gbOffsetTable, nDataSizea);
-	return 0;
-}
-
-GB_INT32 GreyVectorFile_Decoder_ReadHeader(GVF_Decoder me)
-{
-	GreyBit_Stream_Seek(me->gbStream, 0);
-	if (GreyBit_Stream_Read(me->gbStream, (GB_BYTE*)&me->gbFileHeader, 8) != 8)
-		return -1;
-	if (me->gbFileHeader.gbfSize != me->gbStream->size)
-		return -1;
-	GreyBit_Stream_Read(me->gbStream, (GB_BYTE*)&me->gbInfoHeader, 612);
-	me->nItemCount = me->gbInfoHeader.gbiCount;
-	GreyVectorFile_Decoder_InfoInit(me, me->gbInfoHeader.gbiWidth, me->gbInfoHeader.gbiHeight, me->gbInfoHeader.gbiMaxPoints, me->gbInfoHeader.gbiMaxContours);
-	return 0;
-}
-
-GB_INT32 GreyVectorFile_Decoder_InfoInit(GVF_Decoder me, GB_INT16 nMaxWidth, GB_INT16 nHeight, GB_INT16 nMaxPoints, GB_INT16 nMaxContours)
-{
-	me->gbOutline = GreyBitType_Outline_New(me->gbLibrary, nMaxContours, nMaxPoints);
-	me->nBuffSize = GreyVector_Outline_GetSizeEx(nMaxContours, nMaxPoints) + 12;
-	me->pBuff = (GB_BYTE *)GreyBit_Malloc(me->gbMem, me->nBuffSize);
 	return 0;
 }
 
@@ -169,7 +170,7 @@ GB_INT32 GreyVectorFile_Decoder_GetWidth(GB_Decoder decoder, GB_UINT32 nCode, GB
 GB_INT32 GreyVectorFile_Decoder_Decode(GB_Decoder decoder, GB_UINT32 nCode, GB_Data pData, GB_INT16 nSize)
 {
 	GB_UINT16 Lenght; 
-	GB_INT16 nWidth;
+	GB_INT32 nWidth;
 	GB_Outline outline; 
 	GB_UINT32 Offset;
 	GVF_Decoder me = (GVF_Decoder)decoder;
@@ -213,7 +214,7 @@ GB_Decoder GreyVectorFile_Decoder_New(GB_Loader loader, GB_Stream stream)
 {
 	GVF_Decoder decoder;
 
-	decoder = (GVF_Decoder)GreyBit_Malloc(loader->gbMem, 692);
+	decoder = (GVF_Decoder)GreyBit_Malloc(loader->gbMem, sizeof(GVF_DecoderRec));
 	if (decoder)
 	{
 		decoder->gbDecoder.setparam = GreyVectorFile_Decoder_SetParam;

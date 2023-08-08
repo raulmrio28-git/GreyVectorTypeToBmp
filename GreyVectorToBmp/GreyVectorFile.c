@@ -1,3 +1,4 @@
+#include "GreyBitSystem.h"
 #include "GreyVectorFileDecoder.h"
 #include "GreyVectorFile.h"
 

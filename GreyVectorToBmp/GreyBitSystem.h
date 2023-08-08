@@ -34,6 +34,7 @@ typedef void        (*GB_CLOSE)(GB_IOHandler f);
 typedef struct _GB_StreamRec GB_StreamRec, *GB_Stream;
 
 struct _GB_StreamRec {
+	GB_Stream    parent;
 	GB_IOHandler handler;
 	GB_READ      read;
 	GB_WRITE     write;
@@ -42,13 +43,18 @@ struct _GB_StreamRec {
 	GB_INT32     size;
 	GB_INT32     offset;
 	GB_INT32     refcnt;
+#ifdef ENABLE_ENCODER
+	char        *pfilename;
+#endif
 };
 
 extern GB_Stream    GreyBit_Stream_New(const char* filepathname, char bcreate);
 extern GB_Stream    GreyBit_Stream_New_Memory(const void *pBuf, GB_INT32 nBufSize);
+extern GB_Stream    GreyBit_Stream_New_Child(GB_Stream parent);
 extern GB_INT32     GreyBit_Stream_Read(GB_Stream stream, GB_BYTE *p, GB_INT32 size);
 extern GB_INT32     GreyBit_Stream_Write(GB_Stream stream, GB_BYTE *p, GB_INT32 size);
 extern GB_INT32     GreyBit_Stream_Seek(GB_Stream stream, GB_INT32 pos);
+extern GB_INT32     GreyBit_Stream_Offset(GB_Stream stream, GB_INT32 offset, GB_INT32 size);
 extern void         GreyBit_Stream_Done(GB_Stream stream);
 
 // StdLib

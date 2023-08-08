@@ -1,6 +1,6 @@
 #include "UnicodeSection.h"
 
-UNICODESECTION g_Unicode_Section[146] =
+UNICODESECTION g_Unicode_Section[UNICODE_SECTION_NUM] =
 {
   { 32u, 127u },
   { 128u, 255u },
@@ -387,12 +387,12 @@ GB_INT32	UnicodeSection_GetIndex(GB_UINT16 nCode)
 
   if ( nCode >= 0x4E00u && nCode <= 0x9FBFu )
     return 114;
-  for ( i = 0; i < 146; ++i )
+  for ( i = 0; i < UNICODE_SECTION_NUM; ++i )
   {
     if ( g_Unicode_Section[i].nMinCode <= (GB_INT32)nCode && (GB_UINT16)word_2[2 * i] >= (GB_INT32)nCode )
       return i;
   }
-  return 146;
+  return UNICODE_SECTION_NUM;
 }
 
 GB_INT32	UnicodeSection_GetSectionNum(GB_INT32 index)

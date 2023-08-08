@@ -152,7 +152,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="GreyBitCodec.c" />
+    <ClCompile Include="GreyBitSystem.c" />
     <ClCompile Include="GreyBitSystemMSVC.c" />
+    <ClCompile Include="GreyVectorCommon.c" />
     <ClCompile Include="GreyVectorFile.c" />
     <ClCompile Include="GreyVectorFileDecoder.c" />
     <ClCompile Include="GreyVectorToBmp.cpp" />
@@ -162,6 +164,8 @@
     <ClInclude Include="GreyBitCodec.h" />
     <ClInclude Include="GreyBitSystem.h" />
     <ClInclude Include="GreyBitType.h" />
+    <ClInclude Include="GreyBitType_Def.h" />
+    <ClInclude Include="GreyVectorCommon.h" />
     <ClInclude Include="GreyVectorFile.h" />
     <ClInclude Include="GreyVectorFileDecoder.h" />
     <ClInclude Include="UnicodeSection.h" />
