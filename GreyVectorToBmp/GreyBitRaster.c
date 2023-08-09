@@ -326,7 +326,7 @@ void gray_start_cell(RAS_ARG_ TCoord ex, TCoord ey)
 	gray_set_cell(RAS_VAR_ ex, ey);
 }
 
-void gray_render_scanline(RAS_ARG_ TCoord  ey, TPos    x1, TCoord  y1, TPos    x2, TCoord  y2)
+void gray_render_scanline(RAS_ARG_ TCoord ey, TPos x1, TCoord y1, TPos x2, TCoord y2)
 {
 	TCoord  ex1, ex2, fx1, fx2, delta, mod;
 	long    p, first, dx;
@@ -414,9 +414,7 @@ void gray_render_scanline(RAS_ARG_ TCoord  ey, TPos    x1, TCoord  y1, TPos    x
 	ras.cover += delta;
 }
 
-static void
-gray_render_line(RAS_ARG_ TPos  to_x,
-	TPos  to_y)
+void gray_render_line(RAS_ARG_ TPos to_x, TPos to_y)
 {
 	TCoord  ey1, ey2, fy1, fy2, mod;
 	TPos    dx, dy, x, x2;
@@ -573,7 +571,7 @@ void gray_split_conic(GB_Vector* base)
 	base[2].y = (a + b) / 2;
 }
 
-void gray_render_conic(RAS_ARG_ const GB_Vector*  control, const GB_Vector*  to)
+void gray_render_conic(RAS_ARG_ const GB_Vector* control, const GB_Vector* to)
 {
 	TPos        dx, dy;
 	TPos        min, max, y;
@@ -670,7 +668,7 @@ void gray_split_cubic(GB_Vector* base)
 	base[3].y = (a + b) / 2;
 }
 
-void gray_render_cubic(RAS_ARG_ const GB_Vector* control1, const GB_Vector* control2, const GB_Vector*  to)
+void gray_render_cubic(RAS_ARG_ const GB_Vector* control1, const GB_Vector* control2, const GB_Vector* to)
 {
 	GB_Vector*  arc;
 	TPos        min, max, y;
@@ -805,7 +803,7 @@ void gray_render_cubic(RAS_ARG_ const GB_Vector* control1, const GB_Vector* cont
 	}
 }
 
-int gray_move_to(const GB_Vector*  to, PWorker worker)
+int gray_move_to(const GB_Vector* to, PWorker worker)
 {
 	TPos  x, y;
 
@@ -825,13 +823,11 @@ int gray_move_to(const GB_Vector*  to, PWorker worker)
 	return 0;
 }
 
-
 int gray_line_to(const GB_Vector* to, PWorker worker)
 {
 	gray_render_line(RAS_VAR_ UPSCALE(to->x), UPSCALE(to->y));
 	return 0;
 }
-
 
 int gray_conic_to(const GB_Vector* control, const GB_Vector* to, PWorker worker)
 {
@@ -839,13 +835,13 @@ int gray_conic_to(const GB_Vector* control, const GB_Vector* to, PWorker worker)
 	return 0;
 }
 
-static int gray_cubic_to(const GB_Vector* control1, const GB_Vector* control2, const GB_Vector* to, PWorker worker)
+int gray_cubic_to(const GB_Vector* control1, const GB_Vector* control2, const GB_Vector* to, PWorker worker)
 {
 	gray_render_cubic(RAS_VAR_ control1, control2, to);
 	return 0;
 }
 
-void gray_render_span(int y, int count, const GB_Span*  spans, PWorker    worker)
+void gray_render_span(int y, int count, const GB_Span* spans, PWorker worker)
 {
 	unsigned char*  p;
 	GB_BitmapRec*   map = &worker->target;
@@ -1200,7 +1196,7 @@ Exit:
 	return error;
 }
 
-gray_convert_glyph_inner(RAS_ARG)
+int gray_convert_glyph_inner(RAS_ARG)
 {
 	volatile int  error;
 
