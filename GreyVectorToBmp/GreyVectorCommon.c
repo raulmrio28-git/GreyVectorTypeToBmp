@@ -47,10 +47,11 @@ GVF_Outline GreyVector_Outline_GetData(GVF_Outline outline)
 GVF_Outline GreyVector_Outline_FromData(GB_BYTE *pData)
 {
 	GVF_Outline outline = (GVF_Outline)pData;
+
 	outline->n_contours = outline[1].n_contours;
 	outline->n_points = outline[1].n_points;
-	outline->contours = &outline[1].n_points + 1;
-	outline->points = (GVF_Point)(&outline[1].n_points + outline->n_contours + 1);
+	outline->contours = &outline[1].n_points + sizeof(GB_BYTE);
+	outline->points = (GVF_Point)((GB_BYTE*)outline->contours + outline->n_contours);
 	return outline;
 }
 

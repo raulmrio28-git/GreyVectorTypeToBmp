@@ -73,19 +73,17 @@ void GreyBitType_Bitmap_Done(GBHANDLE library, GB_Bitmap bitmap)
 
 GB_Outline GreyBitType_Outline_New(GBHANDLE library, GB_INT16 n_contours, GB_INT16 n_points)
 {
-	GB_BYTE *pBase; 
 	GB_Outline outline; 
 	GB_Library me = (GB_Library)library;
 
-	outline = (GB_Outline)GreyBit_Malloc(me->gbMem, 5 * n_points + 2 * n_contours + sizeof(GB_OutlineRec)+2);
+	outline = (GB_Outline)GreyBit_Malloc(me->gbMem, sizeof(GB_OutlineRec) + sizeof(GB_INT16) * n_contours + sizeof(GB_Point) * n_points + n_points);
 	if (outline)
 	{
 		outline->n_contours = n_contours;
 		outline->n_points = n_points;
-		outline->contours = &outline[1].n_contours;
-		pBase = (GB_BYTE *)(&outline[1].n_contours + n_contours);
-		outline->points = (GB_Point)pBase;
-		outline->tags = &pBase[4 * n_points];
+		outline->contours = (GB_INT16*)((GB_BYTE*)outline + sizeof(GB_OutlineRec));
+		outline->points = (GB_Point)(outline->contours + n_contours);
+		outline->tags = (GB_BYTE*)(outline->points + n_points);
 	}
 	return outline;
 }
@@ -146,7 +144,7 @@ int GreyBitType_Outline_Remove(GB_Outline outline, GB_INT16 idx)
 
 GB_INT32 GreyBitType_Outline_GetSizeEx(GB_INT16 n_contours, GB_INT16 n_points)
 {
-	return 5 * n_points + 2 * n_contours + sizeof(GB_OutlineRec) + 2;
+	return sizeof(GB_OutlineRec) + sizeof(GB_INT16) * n_contours + sizeof(GB_Point) * n_points + n_points;
 }
 
 GB_INT32 GreyBitType_Outline_GetSize(GB_Outline outline)

@@ -1374,22 +1374,22 @@ int GreyBit_Raster_Render(void *raster, GB_Bitmap tobitmap, GB_Outline fromoutli
 	return gray_convert_glyph(worker);
 }
 
-PRaster GreyBit_Raster_New(GB_Library library, int nPoolSize)
+void* GreyBit_Raster_New(GB_Library library, int nPoolSize)
 {
 	PRaster me;
 
 	if (nPoolSize <= 0)
 		nPoolSize = DEFAULT_POOL_SIZE;
-	me = (PRaster)GreyBit_Malloc(library->gbMem, nPoolSize + sizeof(TRaster));
+	me = (PRaster)GreyBit_Malloc(library->gbMem, nPoolSize);
 	if (me)
 	{
 		me->gbMem = library->gbMem;
-		me->worker = (PWorker)&me[1];
-		me->buffer = &me[64].buffer;
-		me->buffer_size = ((char*)&me[1] + nPoolSize - (char *)me->buffer) & 0xFFFFFFF0;
+		me->worker = (PWorker)((GB_BYTE*)me + sizeof(TRaster));
+		me->buffer = (GB_BYTE*)me->worker + sizeof(TWorker);
+		me->buffer_size = (nPoolSize - sizeof(TRaster) - sizeof(TWorker)) & 0xFFFFFFF0;
 		me->band_size = me->buffer_size >> 7;
 	}
-	return me;
+	return (void*)me;
 }
 
 void GreyBit_Raster_Done(void *raster)

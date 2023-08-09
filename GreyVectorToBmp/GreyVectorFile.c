@@ -5,9 +5,8 @@
 GB_BOOL GreyVectorFile_Probe(GB_Stream stream)
 {
   GREYVECTORFILEHEADER fileHeader; 
-
   GreyBit_Stream_Seek(stream, 0);
-  GreyBit_Stream_Read(stream, (GB_BYTE *)&fileHeader, 8);
+  GreyBit_Stream_Read(stream, (GB_BYTE *)&fileHeader, sizeof(GREYVECTORFILEHEADER));
   return fileHeader.gbfTag[0] == 'g' && fileHeader.gbfTag[1] == 'v' && fileHeader.gbfTag[2] == 't' && fileHeader.gbfTag[3] == 'f';
 }
 
@@ -15,7 +14,7 @@ GB_Format GreyVectorFile_Format_New(GB_Library library)
 {
   GB_Format format;
 
-  format = (GB_Format)GreyBit_Malloc(library->gbMem, 16);
+  format = (GB_Format)GreyBit_Malloc(library->gbMem, sizeof(GB_FormatRec));
   if ( format )
   {
     format->next = 0;

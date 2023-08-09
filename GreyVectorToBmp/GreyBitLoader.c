@@ -24,14 +24,14 @@ GB_Decoder GreyBitType_Loader_Probe(GB_Library library, GB_Loader loader)
 
 GBHANDLE GreyBitType_Loader_New(GBHANDLE library, const GB_CHAR *filepathname)
 {
-	GB_Library clibrary;
+	GB_Library my_library;
 	GB_Loader loader;
 
-	clibrary = (GB_Library)library;
-	loader = (GB_Loader)GreyBit_Malloc(clibrary->gbMem, sizeof(GB_LoaderRec));
+	my_library = (GB_Library)library;
+	loader = (GB_Loader)GreyBit_Malloc(my_library->gbMem, sizeof(GB_LoaderRec));
 	if (!loader)
 		return loader;
-	loader->gbLibrary = clibrary;
+	loader->gbLibrary = my_library;
 	loader->gbMem = loader->gbLibrary->gbMem;
 	loader->gbStream = (GB_Stream)GreyBit_Stream_New(filepathname, 0);
 	if (loader->gbStream)
@@ -44,14 +44,14 @@ GBHANDLE GreyBitType_Loader_New(GBHANDLE library, const GB_CHAR *filepathname)
 
 GBHANDLE GreyBitType_Loader_New_Memory(GBHANDLE library, void *pBuf, GB_INT32 nBufSize)
 {
-	GB_Library clibrary;
+	GB_Library my_library;
 	GB_Loader loader;
 
-	clibrary = library;
-	loader = (GB_Loader)GreyBit_Malloc(clibrary->gbMem, sizeof(GB_LoaderRec));
+	my_library = library;
+	loader = (GB_Loader)GreyBit_Malloc(my_library->gbMem, sizeof(GB_LoaderRec));
 	if (!loader)
 		return loader;
-	loader->gbLibrary = clibrary;
+	loader->gbLibrary = my_library;
 	loader->gbMem = loader->gbLibrary->gbMem;
 	loader->gbStream = (GB_Stream)GreyBit_Stream_New_Memory(pBuf, nBufSize);
 	if (loader->gbStream)

@@ -1,6 +1,7 @@
 #include "GreyBitType.h"
 #include "GreyBitType_Def.h"
 #include "GreyBitCodec.h"
+#include "GreyBitRaster.h"
 
 GB_BYTE* GreyBitType_Bitmap_SwitcBuffer(GB_Bitmap bitmap, void *pNewBuf)
 {
