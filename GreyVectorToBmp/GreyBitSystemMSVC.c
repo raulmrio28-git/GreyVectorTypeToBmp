@@ -100,7 +100,6 @@ void GreyBit_Free_Sys(void *p)
 
 GB_IOHandler GreyBit_Open_Sys(const GB_CHAR *p, GB_BOOL bcreate)
 {
-	int result;
 	GB_SysFile handle = (GB_SysFile)GreyBit_Malloc_Sys(sizeof(GB_SysFileRec));
 	if (handle == NULL)
 	{

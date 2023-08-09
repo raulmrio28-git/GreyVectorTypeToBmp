@@ -7,10 +7,10 @@ GVF_Outline GreyVector_Outline_New(GB_Library library, GB_INT16 n_contours, GB_I
 	outline = (GVF_Outline)GreyBit_Malloc(library->gbMem, n_contours + sizeof(GVF_PointRec) * n_points + sizeof(GVF_OutlineRec) + 2);
 	if (outline)
 	{
-		outline->n_contours = n_contours;
-		outline->n_points = n_points;
-		outline[1].n_contours = n_contours;
-		outline[1].n_points = n_points;
+		outline->n_contours = (GB_BYTE)n_contours;
+		outline->n_points = (GB_BYTE)n_points;
+		outline[1].n_contours = (GB_BYTE)n_contours;
+		outline[1].n_points = (GB_BYTE)n_points;
 		outline->contours = &outline[1].n_points + 1;
 		outline->points = (GVF_Point)(outline->contours + n_contours);
 	}
@@ -69,12 +69,12 @@ GVF_Outline GreyVector_Outline_NewByGB(GB_Library library, GB_Outline source)
 	if (outline)
 	{
 		for (i = 0; i < outline->n_contours; ++i)
-			outline->contours[i] = source->contours[i];
+			outline->contours[i] =  (GB_BYTE)source->contours[i];
 		for (ia = 0; ia < outline->n_points; ++ia)
 		{
-			outline->points[ia].x = source->points[ia].x >> 6;
-			outline->points[ia].y = source->points[ia].y >> 6;
-			outline->points[ia].x = source->tags[ia] & 1 | (2 * outline->points[ia].x);
+			outline->points[ia].x = (GB_BYTE)source->points[ia].x >> 6;
+			outline->points[ia].y = (GB_BYTE)source->points[ia].y >> 6;
+			outline->points[ia].x = (GB_BYTE)source->tags[ia] & 1 | (2 * outline->points[ia].x);
 		}
 	}
 	return outline;

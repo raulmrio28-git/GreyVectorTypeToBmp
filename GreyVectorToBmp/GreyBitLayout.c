@@ -108,7 +108,7 @@ int GreyBitType_Layout_Italic(GB_Layout layout)
 		GreyBit_Memset_Sys(pDst, 0, layout->nSwitchBufLen);
 		for (y = 0; y < yMax; ++y)
 		{
-			nOff = (y >> 2) - nHalfOffMax;
+			nOff = (GB_INT16)(y >> 2) - nHalfOffMax;
 			if (nOff >= 0)
 			{
 				xMaxa = bitmap->pitch - nOff;

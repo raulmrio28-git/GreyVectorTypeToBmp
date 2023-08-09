@@ -10,7 +10,7 @@ GB_UINT32 GreyVectorFile_Decoder_GetDataOffset(GVF_Decoder me, GB_UINT32 nCode)
 	GB_UINT16 SectionIndex;
 	GB_INT32 UniIndex;
 
-	UniIndex = UnicodeSection_GetIndex(nCode);
+	UniIndex = UnicodeSection_GetIndex((GB_UINT16)nCode);
 	if (UniIndex >= UNICODE_SECTION_NUM)
 		return 0;
 	SectionIndex = me->gbInfoHeader.gbiIndexSection.gbSectionOff[UniIndex];
@@ -25,7 +25,7 @@ GB_UINT32 GreyVectorFile_Decoder_GetDataOffset(GVF_Decoder me, GB_UINT32 nCode)
 	else
 	{
 		UnicodeSection_GetSectionInfo(UniIndex, &nMinCode, 0);
-		SectionIndex += nCode - nMinCode;
+		SectionIndex += (GB_UINT16)nCode - nMinCode;
 		GreyBit_Stream_Seek(me->gbStream, me->gbInfoHeader.gbiOffsetTabOff + me->gbOffDataBits + 4 * SectionIndex);
 		GreyBit_Stream_Read(me->gbStream, (GB_BYTE*)&nOffset, 4);
 		return nOffset;
@@ -40,7 +40,7 @@ GB_INT32 GreyVectorFile_Decoder_CaheItem(GVF_Decoder me, GB_UINT32 nCode, GB_Out
 
 	if (me->nGreyBitsCount >= me->nCacheItem || !me->gbOffsetTable)
 		return -1;
-	UniIndex = UnicodeSection_GetIndex(nCode);
+	UniIndex = UnicodeSection_GetIndex((GB_UINT16)nCode);
 	if (UniIndex >= 146)
 		return -1;
 	SectionIndex = me->gbInfoHeader.gbiIndexSection.gbSectionOff[UniIndex];
@@ -49,7 +49,7 @@ GB_INT32 GreyVectorFile_Decoder_CaheItem(GVF_Decoder me, GB_UINT32 nCode, GB_Out
 	me->gpGreyBits[me->nGreyBitsCount] = GreyBitType_Outline_Clone(me->gbLibrary, outline);
 	UnicodeSection_GetSectionInfo(UniIndex, &nMinCode, 0);
 	SectionIndex--;
-	SectionIndex += nCode - nMinCode;
+	SectionIndex += (GB_UINT16)nCode - nMinCode;
 	me->gbOffsetTable[SectionIndex] = SET_RAM(me->nGreyBitsCount++);
 	return 0;
 }
@@ -80,7 +80,7 @@ void GreyVectorFile_Decoder_ClearCache(GVF_Decoder me)
 GB_INT32 GreyVectorFile_Decoder_InfoInit(GVF_Decoder me, GB_INT16 nMaxWidth, GB_INT16 nHeight, GB_INT16 nMaxPoints, GB_INT16 nMaxContours)
 {
 	me->gbOutline = GreyBitType_Outline_New(me->gbLibrary, nMaxContours, nMaxPoints);
-	me->nBuffSize = GreyVector_Outline_GetSizeEx(nMaxContours, nMaxPoints) + 12;
+	me->nBuffSize = GreyVector_Outline_GetSizeEx(nMaxContours, (GB_BYTE)nMaxPoints) + 12;
 	me->pBuff = (GB_BYTE *)GreyBit_Malloc(me->gbMem, me->nBuffSize);
 	return 0;
 }
@@ -125,7 +125,7 @@ GB_INT32 GreyVectorFile_Decoder_SetParam(GB_Decoder decoder, void *pParam)
 	{
 		if (me->gpGreyBits)
 			return -1;
-		me->nCacheItem = &pParam;
+		me->nCacheItem = *(GB_INT32*)pParam;
 		me->gpGreyBits = (GB_Outline*)GreyBit_Malloc(me->gbMem, 4 * me->nCacheItem);
 		me->nGreyBitsCount = 0;
 	}
@@ -145,7 +145,7 @@ GB_INT32 GreyVectorFile_Decoder_GetWidth(GB_Decoder decoder, GB_UINT32 nCode, GB
 	GB_INT32 UniIndex;
 	GB_INT32 WidthIdx;
 	GVF_Decoder me = (GVF_Decoder)decoder;
-	UniIndex = UnicodeSection_GetIndex(nCode);
+	UniIndex = UnicodeSection_GetIndex((GB_UINT16)nCode);
 	if (UniIndex >= 146)
 		return 0;
 	WidthIdx = me->gbInfoHeader.gbiWidthSection.gbSectionOff[UniIndex];
@@ -198,7 +198,7 @@ GB_INT32 GreyVectorFile_Decoder_Decode(GB_Decoder decoder, GB_UINT32 nCode, GB_D
 	{
 		pData->format = GB_FORMAT_OUTLINE;
 		pData->data = me->gbOutline;
-		pData->width = nWidth;
+		pData->width = (GB_INT16)nWidth;
 	}
 	return 0;
 }

@@ -51,14 +51,14 @@ GB_Bitmap GreyBitType_Bitmap_New(GBHANDLE library, GB_INT16 nWidth, GB_INT16 nHe
 	GB_Library me = (GB_Library)library;
 
 	currBmp_4 = (bitcount * 8 * nWidth + 63) >> 6;
-	bitmap = (GB_Bitmap)GreyBit_Malloc(me->gbMem, sizeof(GB_BitmapRec));
+	bitmap = (GB_Bitmap)GreyBit_Malloc(me->gbMem, nHeight * currBmp_4 + sizeof(GB_BitmapRec));
 	if (bitmap)
 	{
 		bitmap->width = nWidth;
 		bitmap->height = nHeight;
 		bitmap->bitcount = bitcount;
 		bitmap->pitch = currBmp_4;
-		bitmap->buffer = (GB_BYTE *)GreyBit_Malloc(me->gbMem, nHeight * currBmp_4);
+		bitmap->buffer = (GB_BYTE *)&bitmap[1];
 		if (pInitBuf)
 			GreyBit_Memcpy_Sys(bitmap->buffer, pInitBuf, nHeight * currBmp_4);
 	}

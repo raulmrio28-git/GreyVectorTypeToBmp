@@ -4,10 +4,10 @@
 #include "GreyBitType.h"
 #include <iostream>
 
-#define BIGNUMBER_FONT_SIZE 32
-#define NORMAL_FONT_SIZE    15
-#define LARGE_FONT_SIZE     20
-#define SMALL_FONT_SIZE     4
+#define BIGNUMBER_FONT_SIZE 30
+#define NORMAL_FONT_SIZE    18
+#define LARGE_FONT_SIZE     24
+#define SMALL_FONT_SIZE     8
 
 static GBHANDLE g_pLibrary = NULL;
 static GBHANDLE g_pLoader = NULL;
@@ -94,12 +94,16 @@ unsigned int OEMFont_Release(IFont *pMe)
 #define CGreyBit_COLORSCHEME565_GET_B(color)       ((unsigned short)((unsigned short)((color) << 11) >> 11))   /* ((color) & 0x001F)                        */
 #define CGreyBit_COLORSCHEME565_GET_RGB(r,g,b)     ((unsigned short)(((r) << 11) | ((g) << 5) | (b)))
 
+#define CGreyBit_COLORSCHEME888_GET_R(color)       (color.R)
+#define CGreyBit_COLORSCHEME888_GET_G(color)       (color.G)    /* (((color) >> 5) & 0x003F)                 */
+#define CGreyBit_COLORSCHEME888_GET_B(color)       (color.B)   /* ((color) & 0x001F)                        */
+
 #pragma pack(1)
 typedef struct tagRGBA
 {
+	unsigned char R;
 	unsigned char B;
 	unsigned char G;
-	unsigned char R;
 	unsigned char A;
 } RGBA;
 
@@ -154,26 +158,26 @@ static void DrawChar(IFont *pMe, unsigned char *pBmp, int nPitch, const wchar_t 
 	int xSrc, i;
 	unsigned char xWidth, xWidthOrig, xxDisp, *sp, *pFontData;
 	int bytes_per_row, dispWidth = 0;
-	unsigned short *dp, *dpBase, cText, cBack;
+	RGBA *dp, *dpBase, cText, cBack;
 	unsigned int y1;
 	wchar_t ch;
 	int bmp_offset;
 	GB_Bitmap charBmp;
-	short foreR, foreG, foreB, backR, backG, backB, diffR, diffG, diffB;
+	unsigned char foreR, foreG, foreB, backR, backG, backB, diffR, diffG, diffB;
 
 	bmp_offset = sy * nPitch;
 
-	cText = (unsigned short)Rgba_CvtToRgb565(clrText);
-	cBack = (unsigned short)Rgba_CvtToRgb565(clrBack);
+	cText = clrText;
+	cBack = clrBack;
 
 	nPitch >>= 1;
 
-	foreR = CGreyBit_COLORSCHEME565_GET_R(cText);
-	foreG = CGreyBit_COLORSCHEME565_GET_G(cText);
-	foreB = CGreyBit_COLORSCHEME565_GET_B(cText);
-	backR = CGreyBit_COLORSCHEME565_GET_R(cBack);
-	backG = CGreyBit_COLORSCHEME565_GET_G(cBack);
-	backB = CGreyBit_COLORSCHEME565_GET_B(cBack);
+	foreR = CGreyBit_COLORSCHEME888_GET_R(cText);
+	foreG = CGreyBit_COLORSCHEME888_GET_G(cText);
+	foreB = CGreyBit_COLORSCHEME888_GET_B(cText);
+	backR = CGreyBit_COLORSCHEME888_GET_R(cBack);
+	backG = CGreyBit_COLORSCHEME888_GET_G(cBack);
+	backB = CGreyBit_COLORSCHEME888_GET_B(cBack);
 	diffR = foreR - backR;
 	diffG = foreG - backG;
 	diffB = foreB - backB;
@@ -221,69 +225,36 @@ static void DrawChar(IFont *pMe, unsigned char *pBmp, int nPitch, const wchar_t 
 		xxDisp = (xWidth > xWidthOrig) ? xWidthOrig : xWidth;
 
 		pFontData = charBmp->buffer + oy * bytes_per_row;
-		dp = dpBase = (unsigned short*)(pBmp + bmp_offset + (x << 1));
+		dp = dpBase = (RGBA*)(pBmp + bmp_offset + (x*4));
 
 		y1 = dy;
-		if (bTransparency) {
-			while (y1--) {
-				unsigned int x1 = xxDisp;
-				sp = pFontData;
-				sp += xSrc;
+		while (y1--) {
+			unsigned char alpha = 255;
+			unsigned int x1 = xxDisp;
+			sp = pFontData;
+			sp += xSrc;
 
-				// draw only foreground color                
-				while (x1--) {
-					switch (*sp) {
-					case 0:
-						break;
-					case 0xFF:
-						*dp = cText;
-						break;
-					default:
-						backR = CGreyBit_COLORSCHEME565_GET_R(*dp);
-						backG = CGreyBit_COLORSCHEME565_GET_G(*dp);
-						backB = CGreyBit_COLORSCHEME565_GET_B(*dp);
-						backR = (((foreR - backR) * (*sp)) / 256) + backR;
-						backG = (((foreG - backG) * (*sp)) / 256) + backG;
-						backB = (((foreB - backB) * (*sp)) / 256) + backB;
-						*dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(backR, backG, backB);
-						break;
-					}
-					dp++;
-					sp++;
-				}  // for loop            
+			while (x1--) {
+				switch (*sp) {
+				case 0:
+					*dp = cBack;
+					break;
+				case 0xFF:
+					*dp = cText;
+					break;
+				default:
+					foreR = ((diffR * (*sp)) / 256) + backR;
+					foreG = ((diffG * (*sp)) / 256) + backG;
+					foreB = ((diffB * (*sp)) / 256) + backB;
+					*dp = { foreR, foreG, foreB, *sp };
+					break;
+				}
+				dp++;
+				sp++;
+			}  // for loop
 
-				pFontData += bytes_per_row;
-				dp = dpBase += nPitch;
-			}
-		}
-		else {
-			while (y1--) {
-				unsigned int x1 = xxDisp;
-				sp = pFontData;
-				sp += xSrc;
-
-				while (x1--) {
-					switch (*sp) {
-					case 0:
-						*dp = cBack;
-						break;
-					case 0xFF:
-						*dp = cText;
-						break;
-					default:
-						foreR = ((diffR * (*sp)) / 256) + backR;
-						foreG = ((diffG * (*sp)) / 256) + backG;
-						foreB = ((diffB * (*sp)) / 256) + backB;
-						*dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(foreR, foreG, foreB);
-						break;
-					}
-					dp++;
-					sp++;
-				}  // for loop
-
-				pFontData += bytes_per_row;
-				dp = dpBase += nPitch;
-			}
+			pFontData += bytes_per_row;
+			dp = dpBase += nPitch;
 		}
 
 
@@ -460,7 +431,7 @@ static int DrawTextEx(IFont *pMe, BMP *pDst, const wchar_t * pcText, int nChars,
 	if (dy > 0)
 	{
 
-		DrawChar(pMe, pDst->rawp, 480, pcText, nChars, x, xMin, xMax, sy, oy, dy, clrText, clrBack, bTransparent, &dispWidth);
+		DrawChar(pMe, pDst->rawp, 256, pcText, nChars, x, xMin, xMax, sy, oy, dy, clrText, clrBack, bTransparent, &dispWidth);
 	}
 	else if (bUnderline)
 	{
@@ -581,15 +552,15 @@ static int OEMFont_DrawText(IFont *pMe, BMP *pDst, int x, int y, const wchar_t *
 
 int main(int argc, char* argv[])
 {
-	wchar_t text[] = L"0123ABCWabcw{;*";
+	wchar_t text[] = L"Browser";
 	BMP mybitmap;
-	mybitmap.width = 320;
-	mybitmap.height = 240;
-	mybitmap.rawp = (unsigned char*)malloc(mybitmap.width * mybitmap.height * 4);
+	mybitmap.width = 128;
+	mybitmap.height = 160;
+	mybitmap.rawp = (unsigned char*)malloc(mybitmap.width * mybitmap.height * sizeof(RGBA));
 	if (!argv[1]) return 1;
 	GreyBitFont_Init(argv[1]);
-	OEMFont_Create(&gFontBigNumber);
-	OEMFont_DrawText(&gFontBigNumber, &mybitmap, 0, 0, text, wcslen(text), { 0, 0, 0 }, { 255, 255, 255 }, 0, IDF_ALIGN_MIDDLE);
+	OEMFont_Create(&gFontNormal);
+	OEMFont_DrawText(&gFontNormal, &mybitmap, 0, 0, text, wcslen(text), { 255, 255, 255, 255 }, { 0, 0, 0, 0}, 0, 0);
 	GreyBitBrewFont_Done();
 }
 

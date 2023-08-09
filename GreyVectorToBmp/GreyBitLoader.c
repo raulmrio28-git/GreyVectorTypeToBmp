@@ -3,10 +3,8 @@
 #include "GreyBitSystem.h"
 #include "GreyBitCodec.h"
 
-extern GB_Stream GreyBit_Stream_New(const char* filepathname, char bcreate);
-extern GB_Stream GreyBit_Stream_New_Memory(const void *pBuf, GB_INT32 nBufSize);
-extern int GreyBit_Format_Probe(GB_FormatRec *format, GB_StreamRec *stream);
-extern GB_Decoder GreyBit_Format_DecoderNew(GB_FormatRec *format, GB_LoaderRec *loader, GB_StreamRec *stream);
+extern int GreyBit_Format_Probe(GB_Format format, GB_Stream stream);
+extern GB_Decoder GreyBit_Format_DecoderNew(GB_Format format, GB_Loader loader, GB_Stream stream);
 
 GB_Decoder GreyBitType_Loader_Probe(GB_Library library, GB_Loader loader)
 {

@@ -18,16 +18,16 @@ typedef struct _RST_Vector
 
 #define GB_Vector GB_PointRec
 
-typedef int(*GB_Outline_MoveToFunc)(const RST_Vector* to, void* user);
+typedef int(*GB_Outline_MoveToFunc)(const GB_Vector* to, void* user);
 #define GB_Outline_MoveTo_Func GB_Outline_MoveToFunc
 
-typedef int(*GB_Outline_LineToFunc)(const RST_Vector* to, void* user);
+typedef int(*GB_Outline_LineToFunc)(const GB_Vector* to, void* user);
 #define GB_Outline_LineTo_Func GB_Outline_LineToFunc
 
-typedef int(*GB_Outline_ConicToFunc)(const RST_Vector* control, const RST_Vector* to, void* user);
+typedef int(*GB_Outline_ConicToFunc)(const GB_Vector* control, const GB_Vector* to, void* user);
 #define GB_Outline_ConicTo_Func GB_Outline_ConicToFunc
 
-typedef int(*GB_Outline_CubicToFunc)(const RST_Vector* control1, const RST_Vector* control2, const RST_Vector* to, void* user);
+typedef int(*GB_Outline_CubicToFunc)(const GB_Vector* control1, const GB_Vector* control2, const GB_Vector* to, void* user);
 #define GB_Outline_CubicTo_Func GB_Outline_CubicToFunc
 
 typedef struct  GB_Outline_Funcs_
