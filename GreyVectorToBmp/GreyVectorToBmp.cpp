@@ -1,8 +1,8 @@
 ﻿// GreyVectorToBmp.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
-#include <iostream>
 #include "GreyBitType.h"
+#include <iostream>
 
 #define BIGNUMBER_FONT_SIZE 32
 #define NORMAL_FONT_SIZE    15
@@ -150,233 +150,148 @@ static short Rgba_CvtToRgb565(RGBA color)
 static void DrawChar(IFont *pMe, unsigned char *pBmp, int nPitch, const wchar_t *pcText, int nChars,
 	int x, int xMin, int xMax, int sy, int oy, int dy, RGBA clrText, RGBA clrBack,
 	bool bTransparency, int *pOutWidth)
-{      
+{
+	int xSrc, i;
+	unsigned char xWidth, xWidthOrig, xxDisp, *sp, *pFontData;
+	int bytes_per_row, dispWidth = 0;
+	unsigned short *dp, *dpBase, cText, cBack;
+	unsigned int y1;
+	wchar_t ch;
+	int bmp_offset;
+	GB_Bitmap charBmp;
+	short foreR, foreG, foreB, backR, backG, backB, diffR, diffG, diffB;
+
+	bmp_offset = sy * nPitch;
+
+	cText = (unsigned short)Rgba_CvtToRgb565(clrText);
+	cBack = (unsigned short)Rgba_CvtToRgb565(clrBack);
+
+	nPitch >>= 1;
+
+	foreR = CGreyBit_COLORSCHEME565_GET_R(cText);
+	foreG = CGreyBit_COLORSCHEME565_GET_G(cText);
+	foreB = CGreyBit_COLORSCHEME565_GET_B(cText);
+	backR = CGreyBit_COLORSCHEME565_GET_R(cBack);
+	backG = CGreyBit_COLORSCHEME565_GET_G(cBack);
+	backB = CGreyBit_COLORSCHEME565_GET_B(cBack);
+	diffR = foreR - backR;
+	diffG = foreG - backG;
+	diffB = foreB - backB;
+
+	for (i = 0; i < nChars && pcText[i]; i++)
 	{
+		if (x > xMax)
+		{
+			break;
+		}
+
+		ch = pcText[i];
+		if (ch < ' ') continue;
+
+		if (0 != GreyBitType_Layout_LoadChar(pMe->pLayout, ch, &charBmp))
+		{
+			continue;
+		}
+
+		xWidth = (unsigned char)charBmp->width;
+		bytes_per_row = charBmp->pitch;
+
+		// Clip x coordinate
+		xWidthOrig = xWidth;
+		//x += charBmp->horioff;
+		xSrc = 0;
+
+		if (x < xMin)
+		{
+			if ((x + xWidth) < xMin)
 			{
-				int xSrc, i;
-				unsigned char xWidth, xWidthOrig, xxDisp, *sp, *pFontData;
-				int bytes_per_row, dispWidth = 0;
-				unsigned short *dp, *dpBase, cText, cBack;
-				unsigned int y1;
-				wchar_t ch, ch1;
-				int bmp_offset;
-				GB_Bitmap charBmp;
-				short foreR, foreG, foreB, backR, backG, backB, diffR, diffG, diffB;
-				int xCombOff = 0;
+				x += xWidth;
+				continue;
+			}
 
-				bmp_offset = sy * nPitch;
+			xSrc = xMin - x;
+			xWidth -= xSrc;
+			x = xMin;
+		}
+		else if ((x + xWidth) > xMax)
+		{
+			xWidth = xMax - x + 1;
+		}
 
-				cText = Rgba_CvtToRgb565(clrText);
-				cBack = Rgba_CvtToRgb565(clrBack);
+		xxDisp = (xWidth > xWidthOrig) ? xWidthOrig : xWidth;
 
-				nPitch >>= 1;
+		pFontData = charBmp->buffer + oy * bytes_per_row;
+		dp = dpBase = (unsigned short*)(pBmp + bmp_offset + (x << 1));
 
-				foreR = CGreyBit_COLORSCHEME565_GET_R(cText);
-				foreG = CGreyBit_COLORSCHEME565_GET_G(cText);
-				foreB = CGreyBit_COLORSCHEME565_GET_B(cText);
-				backR = CGreyBit_COLORSCHEME565_GET_R(cBack);
-				backG = CGreyBit_COLORSCHEME565_GET_G(cBack);
-				backB = CGreyBit_COLORSCHEME565_GET_B(cBack);
-				diffR = foreR - backR;
-				diffG = foreG - backG;
-				diffB = foreB - backB;
+		y1 = dy;
+		if (bTransparency) {
+			while (y1--) {
+				unsigned int x1 = xxDisp;
+				sp = pFontData;
+				sp += xSrc;
 
-				for (i = 0; i < nChars && pcText[i]; i++)
-				{
-					ch = pcText[i];
-					if (ch < ' ') continue;
-
-					if (xCombOff == 0)
-					{
-						ch1 = (i + 1) < nChars ? pcText[i + 1] : 0;
-						if (GetCombineOffSet(pMe, ch, ch1, &xCombOff))
-						{
-							ch = ch1;
-							ch1 = pcText[i];
-						}
-
-						if (0 != GreyBitType_Layout_LoadChar(pMe->pLayout, ch, &charBmp))
-						{
-							continue;
-						}
-					}
-					else
-					{
-						if (0 != GreyBitType_Layout_LoadChar(pMe->pLayout, ch1, &charBmp))
-						{
-							xCombOff = 0;
-							continue;
-						}
-
-						charBmp->horioff += xCombOff;
-						xCombOff = 0;
-					}
-
-					xWidth = (unsigned char)charBmp->width;
-					bytes_per_row = charBmp->pitch;
-
-					// Clip x coordinate
-					xWidthOrig = xWidth;
-					x += charBmp->horioff;
-					xSrc = 0;
-
-					if (x > xMax)
-					{
+				// draw only foreground color                
+				while (x1--) {
+					switch (*sp) {
+					case 0:
+						break;
+					case 0xFF:
+						*dp = cText;
+						break;
+					default:
+						backR = CGreyBit_COLORSCHEME565_GET_R(*dp);
+						backG = CGreyBit_COLORSCHEME565_GET_G(*dp);
+						backB = CGreyBit_COLORSCHEME565_GET_B(*dp);
+						backR = (((foreR - backR) * (*sp)) / 256) + backR;
+						backG = (((foreG - backG) * (*sp)) / 256) + backG;
+						backB = (((foreB - backB) * (*sp)) / 256) + backB;
+						*dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(backR, backG, backB);
 						break;
 					}
-					else if (x < xMin)
-					{
-						if ((x + xWidth) < xMin)
-						{
-							x += xWidth;
-							continue;
-						}
+					dp++;
+					sp++;
+				}  // for loop            
 
-						xSrc = xMin - x;
-						xWidth -= xSrc;
-						x = xMin;
-					}
-					else if ((x + xWidth) > xMax)
-					{
-						xWidth = xMax - x + 1;
-					}
-
-					xxDisp = (xWidth > xWidthOrig) ? xWidthOrig : xWidth;
-
-					pFontData = charBmp->buffer + oy * bytes_per_row;
-					dp = dpBase = (unsigned short*)(pBmp + bmp_offset + (x << 1));
-
-					y1 = dy;
-					if (bTransparency) {
-						while (y1--) {
-							unsigned int x1 = xxDisp;
-							sp = pFontData;
-							sp += xSrc;
-
-							// draw only foreground color                
-							while (x1--) {
-								switch (*sp) {
-								case 0:
-									break;
-								case 0xFF:
-									*dp = cText;
-									break;
-								default:
-									backR = CGreyBit_COLORSCHEME565_GET_R(*dp);
-									backG = CGreyBit_COLORSCHEME565_GET_G(*dp);
-									backB = CGreyBit_COLORSCHEME565_GET_B(*dp);
-									backR = (((foreR - backR) * (*sp)) >> 8) + backR;
-									backG = (((foreG - backG) * (*sp)) >> 8) + backG;
-									backB = (((foreB - backB) * (*sp)) >> 8) + backB;
-									*dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(backR, backG, backB);
-									break;
-								}
-								dp++;
-								sp++;
-							}  // for loop            
-
-							pFontData += bytes_per_row;
-							dp = dpBase += nPitch;
-						}
-					}
-					else {
-						if (charBmp->horioff < 0) //如泰语等语言
-						{
-							while (y1--) {
-								unsigned int x1 = -charBmp->horioff;
-								sp = pFontData;
-								sp += xSrc;
-
-								// draw only foreground color                
-								while (x1--) {
-									switch (*sp) {
-									case 0:
-										break;
-									case 0xFF:
-										*dp = cText;
-										break;
-									default:
-										backR = CGreyBit_COLORSCHEME565_GET_R(*dp);
-										backG = CGreyBit_COLORSCHEME565_GET_G(*dp);
-										backB = CGreyBit_COLORSCHEME565_GET_B(*dp);
-										backR = (((foreR - backR) * (*sp)) >> 8) + backR;
-										backG = (((foreG - backG) * (*sp)) >> 8) + backG;
-										backB = (((foreB - backB) * (*sp)) >> 8) + backB;
-										*dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(backR, backG, backB);
-										break;
-									}
-									dp++;
-									sp++;
-								}  // for loop            
-
-								backR = CGreyBit_COLORSCHEME565_GET_R(cBack);
-								backG = CGreyBit_COLORSCHEME565_GET_G(cBack);
-								backB = CGreyBit_COLORSCHEME565_GET_B(cBack);
-								x1 = xxDisp + charBmp->horioff;
-								while (x1--) {
-									switch (*sp) {
-									case 0:
-										*dp = cBack;
-										break;
-									case 0xFF:
-										*dp = cText;
-										break;
-									default:
-										foreR = ((diffR * (*sp)) >> 8) + backR;
-										foreG = ((diffG * (*sp)) >> 8) + backG;
-										foreB = ((diffB * (*sp)) >> 8) + backB;
-										*dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(foreR, foreG, foreB);
-										break;
-									}
-									dp++;
-									sp++;
-								}  // for loop
-
-								pFontData += bytes_per_row;
-								dp = dpBase += nPitch;
-							}
-						}
-						else
-						{
-							while (y1--) {
-								unsigned int x1 = xxDisp;
-								sp = pFontData;
-								sp += xSrc;
-
-								while (x1--) {
-									switch (*sp) {
-									case 0:
-										*dp = cBack;
-										break;
-									case 0xFF:
-										*dp = cText;
-										break;
-									default:
-										foreR = ((diffR * (*sp)) >> 8) + backR;
-										foreG = ((diffG * (*sp)) >> 8) + backG;
-										foreB = ((diffB * (*sp)) >> 8) + backB;
-										*dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(foreR, foreG, foreB);
-										break;
-									}
-									dp++;
-									sp++;
-								}  // for loop
-
-								pFontData += bytes_per_row;
-								dp = dpBase += nPitch;
-							}
-						}
-					}
-
-					dispWidth += xWidth;
-					x += xWidth;
-				}
-
-				*pOutWidth = dispWidth;
+				pFontData += bytes_per_row;
+				dp = dpBase += nPitch;
 			}
+		}
+		else {
+			while (y1--) {
+				unsigned int x1 = xxDisp;
+				sp = pFontData;
+				sp += xSrc;
+
+				while (x1--) {
+					switch (*sp) {
+					case 0:
+						*dp = cBack;
+						break;
+					case 0xFF:
+						*dp = cText;
+						break;
+					default:
+						foreR = ((diffR * (*sp)) / 256) + backR;
+						foreG = ((diffG * (*sp)) / 256) + backG;
+						foreB = ((diffB * (*sp)) / 256) + backB;
+						*dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(foreR, foreG, foreB);
+						break;
+					}
+					dp++;
+					sp++;
+				}  // for loop
+
+				pFontData += bytes_per_row;
+				dp = dpBase += nPitch;
+			}
+		}
+
+
+		dispWidth += xWidth;
+		x += xWidth;
 	}
 
-
+	*pOutWidth = dispWidth;
 }
 
 #define IDF_TEXT_TRANSPARENT 0x1
@@ -390,81 +305,81 @@ static void DrawChar(IFont *pMe, unsigned char *pBmp, int nPitch, const wchar_t 
 #define IDF_ALIGN_MIDDLE 0x40
 
 static int OEMFont_MeasureText(IFont *pMe, const wchar_t *pcText, int nChars, int nMaxWidth, int *pnCharFits, int *pnPixels)
-{       
+{
 	{
-			int nRet = 0;
-			int nRealStrLen, nFits, nTotalWidth = 0;
-			wchar_t ch, ch1;
-			int xCombOff = 0;
+		int nRet = 0;
+		int nRealStrLen, nFits, nTotalWidth = 0;
+		wchar_t ch, ch1;
+		int xCombOff = 0;
 
-			if (pMe->pLayout == NULL) {
-				return 1;
+		if (pMe->pLayout == NULL) {
+			return 1;
+		}
+
+		// Let's perform some sanity checks first
+		if (!pcText) {
+			return 0;
+		}
+
+		nRealStrLen = wcslen(pcText);
+
+		if (nChars < 0 || nRealStrLen < nChars)
+		{
+			nChars = nRealStrLen;
+		}
+
+		if (nMaxWidth <= 0)
+		{
+			nMaxWidth = 0x0FFFFFFF;
+		}
+
+		for (nFits = 0; nFits < nChars; nFits++)
+		{
+			ch = *pcText++;
+			if (ch < ' ') {
+				continue;
 			}
 
-			// Let's perform some sanity checks first
-			if (!pcText) {
-				return 0;
-			}
-
-			nRealStrLen = wcslen(pcText);
-
-			if (nChars < 0 || nRealStrLen < nChars)
+			if (xCombOff == 0)
 			{
-				nChars = nRealStrLen;
-			}
-
-			if (nMaxWidth <= 0)
-			{
-				nMaxWidth = 0x0FFFFFFF;
-			}
-
-			for (nFits = 0; nFits < nChars; nFits++)
-			{
-				ch = *pcText++;
-				if (ch < ' ') {
-					continue;
-				}
-
-				if (xCombOff == 0)
+				ch1 = (nFits + 1) < nChars ? (*(pcText + 1)) : 0;
+				if (GetCombineOffSet(pMe, ch, ch1, &xCombOff))
 				{
-					ch1 = (nFits + 1) < nChars ? (*(pcText + 1)) : 0;
-					if (GetCombineOffSet(pMe, ch, ch1, &xCombOff))
-					{
-						ch = ch1;
-						ch1 = *pcText;
-					}
-
-					nTotalWidth += GreyBitType_Layout_GetWidth(pMe->pLayout, ch) + xCombOff;
-				}
-				else
-				{
-					nTotalWidth += GreyBitType_Layout_GetWidth(pMe->pLayout, ch1);
-					xCombOff = 0;
+					ch = ch1;
+					ch1 = *pcText;
 				}
 
-				//nTotalWidth += GreyBitType_Layout_GetWidth(pMe->pLayout, ch);
-				if (nTotalWidth >= nMaxWidth)
-				{
-					nTotalWidth = nMaxWidth;
-					break;
-				}
-			}
-
-			if (!pnCharFits)
-			{
-				pnCharFits = &nFits;
+				nTotalWidth += GreyBitType_Layout_GetWidth(pMe->pLayout, ch) + xCombOff;
 			}
 			else
 			{
-				*pnCharFits = nFits;
+				nTotalWidth += GreyBitType_Layout_GetWidth(pMe->pLayout, ch1);
+				xCombOff = 0;
 			}
 
-			if (pnPixels)
+			//nTotalWidth += GreyBitType_Layout_GetWidth(pMe->pLayout, ch);
+			if (nTotalWidth >= nMaxWidth)
 			{
-				*pnPixels = nTotalWidth;
+				nTotalWidth = nMaxWidth;
+				break;
 			}
+		}
 
-			return nRet;  
+		if (!pnCharFits)
+		{
+			pnCharFits = &nFits;
+		}
+		else
+		{
+			*pnCharFits = nFits;
+		}
+
+		if (pnPixels)
+		{
+			*pnPixels = nTotalWidth;
+		}
+
+		return nRet;
 	}
 }
 
@@ -545,7 +460,7 @@ static int DrawTextEx(IFont *pMe, BMP *pDst, const wchar_t * pcText, int nChars,
 	if (dy > 0)
 	{
 
-		DrawChar(pMe, pDst->rawp, 256, pcText, nChars, x, xMin, xMax, sy, oy, dy, clrText, clrBack, bTransparent, &dispWidth);
+		DrawChar(pMe, pDst->rawp, 480, pcText, nChars, x, xMin, xMax, sy, oy, dy, clrText, clrBack, bTransparent, &dispWidth);
 	}
 	else if (bUnderline)
 	{
@@ -577,7 +492,7 @@ static int OEMFont_DrawText(IFont *pMe, BMP *pDst, int x, int y, const wchar_t *
 	if (!pcText)
 	{
 		return 0;
-	}  
+	}
 
 	// Calculate the string length
 	if (nChars < 0)
@@ -666,25 +581,15 @@ static int OEMFont_DrawText(IFont *pMe, BMP *pDst, int x, int y, const wchar_t *
 
 int main(int argc, char* argv[])
 {
-	wchar_t text[] = L"Hello ";
+	wchar_t text[] = L"0123ABCWabcw{;*";
 	BMP mybitmap;
-	mybitmap.width = 240;
-	mybitmap.height = 320;
-	mybitmap.rawp = (unsigned char*)malloc(240*320 * 4);
+	mybitmap.width = 320;
+	mybitmap.height = 240;
+	mybitmap.rawp = (unsigned char*)malloc(mybitmap.width * mybitmap.height * 4);
 	if (!argv[1]) return 1;
 	GreyBitFont_Init(argv[1]);
-	OEMFont_Create(&gFontNormal);
-	OEMFont_DrawText(&gFontNormal, &mybitmap, 0, 0, text, wcslen(text), { 0, 0, 0 }, { 255, 255, 255 }, 0, IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE);
+	OEMFont_Create(&gFontBigNumber);
+	OEMFont_DrawText(&gFontBigNumber, &mybitmap, 0, 0, text, wcslen(text), { 0, 0, 0 }, { 255, 255, 255 }, 0, IDF_ALIGN_MIDDLE);
 	GreyBitBrewFont_Done();
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file

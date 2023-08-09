@@ -138,7 +138,7 @@ typedef struct  TWorker_
 	int  band_size;
 	int  band_shoot;
 
-	int  conic_size;
+	int  conic_level;
 	int  cubic_level;
 
 	void*       buffer;
@@ -852,9 +852,7 @@ void gray_render_span(int y, int count, const GB_Span*  spans, PWorker    worker
 
 
 	/* first of all, compute the scanline offset */
-	p = (unsigned char*)map->buffer - y * map->pitch;
-	if (map->pitch >= 0)
-		p += (unsigned)((map->height - 1) * map->pitch);
+	p = (unsigned char*)map->buffer + y * map->pitch;
 
 	for (; count > 0; count--, spans++)
 	{
@@ -1307,7 +1305,7 @@ int gray_convert_glyph(RAS_ARG)
 
 			if (!error)
 			{
-				gray_sweep(RAS_VAR_ &ras.target);
+				gray_sweep(RAS_VAR);
 				band--;
 				continue;
 			}
