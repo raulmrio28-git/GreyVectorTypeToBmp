@@ -61,6 +61,7 @@ typedef GB_INT32(*GB_DECODER_SETPARAM)(GB_Decoder decoder, void *pParam);
 typedef GB_INT32(*GB_DECODER_GETCOUNT)(GB_Decoder decoder);
 typedef GB_INT32(*GB_DECODER_GETHEIGHT)(GB_Decoder decoder);
 typedef GB_INT32(*GB_DECODER_GETWIDTH)(GB_Decoder decoder, GB_UINT32 nCode, GB_INT16 nSize);
+typedef GB_INT16(*GB_DECODER_GETADVANCE)(GB_Decoder decoder, GB_UINT32 nCode, GB_INT16 nSize);
 typedef GB_INT32(*GB_DECODER_DECODE)(GB_Decoder decoder, GB_UINT32 nCode, GB_Data pData, GB_INT16 nSize);
 typedef void(*GB_DECODER_DONE)(GB_Decoder decoder);
 
@@ -90,6 +91,7 @@ struct _GB_DecoderRec
 	GB_DECODER_SETPARAM setparam;
 	GB_DECODER_GETCOUNT getcount;
 	GB_DECODER_GETWIDTH getwidth;
+	GB_DECODER_GETADVANCE getadvance;
 	GB_DECODER_DECODE decode;
 	GB_DECODER_DONE done;
 };

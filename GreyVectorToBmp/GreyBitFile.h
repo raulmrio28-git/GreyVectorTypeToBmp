@@ -28,6 +28,7 @@ typedef struct tagGREYBITINFOHEADER
 	GB_INT16 gbiWidth;
 	GB_INT16 gbiHeight;
 	GB_UINT32 gbiWidthTabOff;
+	GB_UINT32 gbiHoriOffTabOff;
 	GB_UINT32 gbiOffsetTabOff;
 	GB_UINT32 gbiOffGreyBits;
 	B_SECTIONOINFO gbiWidthSection;
@@ -50,6 +51,7 @@ typedef struct GBF_DecoderRec
 	GREYBITFILEHEADER gbFileHeader;
 	GREYBITINFOHEADER gbInfoHeader;
 	GB_BYTE *gbWidthTable;
+	GB_BYTE *gbHoriOffTable;
 	GB_UINT32 *gbOffsetTable;
 	GB_BYTE **gpGreyBits;
 	GB_INT32 nGreyBitsCount;
@@ -70,6 +72,7 @@ typedef struct GBF_EncoderRec
 	GREYBITFILEHEADER gbFileHeader;
 	GREYBITINFOHEADER gbInfoHeader;
 	GB_BYTE *gbWidthTable;
+	GB_BYTE *gbHoriOffTable;
 	GB_UINT32 *gbOffsetTable;
 	GB_BYTE **gpGreyBits;
 	GB_UINT16 *pnGreySize;

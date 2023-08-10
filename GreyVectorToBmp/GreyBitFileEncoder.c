@@ -10,6 +10,8 @@ void GreyBitFile_Encoder_ClearCache(GBF_Encoder me)
 
 	if (me->gbWidthTable)
 		GreyBit_Free(me->gbMem, me->gbWidthTable);
+	if (me->gbHoriOffTable)
+		GreyBit_Free(me->gbMem, me->gbHoriOffTable);
 	if (me->gbOffsetTable)
 		GreyBit_Free(me->gbMem, me->gbOffsetTable);
 	if (me->pnGreySize)
@@ -70,6 +72,7 @@ GB_INT32 GreyBitFile_Encoder_Delete(GB_Encoder encoder, GB_UINT32 nCode)
 {
 	GBF_Encoder me = (GBF_Encoder)encoder;
 	me->gbOffsetTable[nCode] = 0;
+	me->gbHoriOffTable[nCode] = 0;
 	me->gbWidthTable[nCode] = 0;
 	if (me->gpGreyBits[nCode])
 	{
@@ -186,6 +189,7 @@ GB_INT32 GreyBitFile_Encoder_Encode(GB_Encoder encoder, GB_UINT32 nCode, GB_Data
 	me->pnGreySize[nCode] = (GB_UINT16)nOutLen;
 	me->gbOffsetTable[nCode] = SET_RAM(nCode);
 	me->gbWidthTable[nCode] = (GB_BYTE)bitmap->width;
+	me->gbHoriOffTable[nCode] = (GB_BYTE)bitmap->horioff;
 	return 0;
 }
 
@@ -211,6 +215,17 @@ GB_INT32 GreyBitFile_Encoder_WriteAll(GBF_Encoder me)
 			pData = (GB_BYTE *)&me->gbWidthTable[nMinCode];
 			nDataSize = (GB_UINT16)nSectionLen;
 			GreyBit_Stream_Write(me->gbStream, pData, nSectionLen);
+		}
+	}
+	for (nSection = 0; nSection < UNICODE_SECTION_NUM; ++nSection)
+	{
+		UnicodeSection_GetSectionInfo(nSection, &nMinCode, &nMaxCode);
+		nSectionLen = nMaxCode - nMinCode + 1;
+		if (me->gbInfoHeader.gbiWidthSection.gbSectionOff[nSection])
+		{
+			pData = (GB_BYTE *)&me->gbHoriOffTable[nMinCode];
+			nDataSize = nSectionLen;
+			GreyBit_Stream_Write(me->gbStream, pData, nDataSize);
 		}
 	}
 	for (nSection = 0; nSection < UNICODE_SECTION_NUM; ++nSection)
@@ -259,6 +274,7 @@ GB_INT32 GreyBitFile_Encoder_BuildAll(GBF_Encoder me)
 	GB_UINT32 nCount;
 	GB_UINT32 nGreyBitSize;
 	GB_UINT32 nOffSetTableSize;
+	GB_UINT32 nHoriOffTableSize;
 	GB_UINT32 nWidthTableSize;
 	GB_INT16 nCode;
 	GB_INT16 nCodea;
@@ -269,6 +285,7 @@ GB_INT32 GreyBitFile_Encoder_BuildAll(GBF_Encoder me)
 	GB_INT16 nSection;
 
 	nWidthTableSize = 0;
+	nHoriOffTableSize = 0;
 	nOffSetTableSize = 0;
 	nGreyBitSize = 0;
 	nCount = 0;
@@ -283,6 +300,7 @@ GB_INT32 GreyBitFile_Encoder_BuildAll(GBF_Encoder me)
 				me->gbInfoHeader.gbiWidthSection.gbSectionOff[nSection] = (GB_UINT16)nWidthTableSize + 1;
 				me->gbInfoHeader.gbiIndexSection.gbSectionOff[nSection] = (GB_INT16)(nOffSetTableSize >> 2) + 1;
 				nWidthTableSize += nSectionLen;
+				nHoriOffTableSize += nSectionLen;
 				nOffSetTableSize += sizeof(GB_UINT32) * nSectionLen;
 				break;
 			}
@@ -315,15 +333,16 @@ GB_INT32 GreyBitFile_Encoder_BuildAll(GBF_Encoder me)
 		}
 	}
 	me->gbInfoHeader.gbiCount = nCount;
-	me->gbInfoHeader.gbiOffGreyBits = nOffSetTableSize + nWidthTableSize;
-	me->gbInfoHeader.gbiOffsetTabOff = nWidthTableSize;
+	me->gbInfoHeader.gbiOffGreyBits = nOffSetTableSize + nHoriOffTableSize + nWidthTableSize;
+	me->gbInfoHeader.gbiOffsetTabOff = nHoriOffTableSize + nWidthTableSize;
+	me->gbInfoHeader.gbiHoriOffTabOff = nWidthTableSize;
 	me->gbInfoHeader.gbiWidthTabOff = 0;
 	me->gbInfoHeader.gbiSize = sizeof(GREYBITINFOHEADER);
 	me->gbFileHeader.gbfTag[0] = 'g';
 	me->gbFileHeader.gbfTag[1] = 'b';
 	me->gbFileHeader.gbfTag[2] = 't';
 	me->gbFileHeader.gbfTag[3] = 'f';
-	me->gbFileHeader.gbfSize = nGreyBitSize + nOffSetTableSize + nWidthTableSize + sizeof(GREYBITFILEHEADER) + sizeof(GREYBITINFOHEADER);
+	me->gbFileHeader.gbfSize = nGreyBitSize + nOffSetTableSize + nWidthTableSize + nHoriOffTableSize + sizeof(GREYBITFILEHEADER) + sizeof(GREYBITINFOHEADER);
 	return 0;
 }
 
@@ -356,11 +375,13 @@ void GreyBitFile_Encoder_Done(GB_Encoder encoder)
 GB_INT32 GreyBitFile_Encoder_Init(GBF_Encoder me)
 {
 	me->gbWidthTable = (GB_BYTE *)GreyBit_Malloc(me->gbMem, MAX_COUNT);
+	me->gbHoriOffTable = (GB_BYTE *)GreyBit_Malloc(me->gbMem, MAX_COUNT);
 	me->gbOffsetTable = (GB_UINT32 *)GreyBit_Malloc(me->gbMem, sizeof(GB_UINT32)*MAX_COUNT);
 	me->gpGreyBits = (GB_BYTE **)GreyBit_Malloc(me->gbMem, sizeof(GB_BYTE*)*MAX_COUNT);
 	me->pnGreySize = (GB_UINT16 *)GreyBit_Malloc(me->gbMem, sizeof(GB_UINT16)*MAX_COUNT);
 	me->nCacheItem = MAX_COUNT;
 	GreyBit_Memset_Sys(me->gbWidthTable, 0, MAX_COUNT);
+	GreyBit_Memset_Sys(me->gbHoriOffTable, 0, MAX_COUNT);
 	return 0;
 }
 

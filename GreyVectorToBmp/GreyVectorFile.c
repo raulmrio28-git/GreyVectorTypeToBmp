@@ -1,5 +1,8 @@
 #include "GreyBitSystem.h"
 #include "GreyVectorFileDecoder.h"
+#ifdef ENABLE_ENCODER
+#include "GreyVectorFileEncoder.h"
+#endif //ENABLE_ENCODER
 #include "GreyVectorFile.h"
 
 #ifdef ENABLE_GREYVECTORFILE
@@ -24,6 +27,9 @@ GB_Format GreyVectorFile_Format_New(GB_Library library)
     format->tag[2] = 102;
     format->probe = GreyVectorFile_Probe;
     format->decodernew = GreyVectorFile_Decoder_New;
+#ifdef ENCODER_SUPPORT
+	format->encodernew = GreyVectorFile_Encoder_New;
+#endif //ENCODER_SUPPORT
   }
   return format;
 }

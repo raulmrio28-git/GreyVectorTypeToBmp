@@ -43,6 +43,7 @@ typedef struct  _GB_DataRec
 {
     GB_DataFormat   format;
     GB_INT16        width;
+	GB_INT16		horioff;
     void           *data;
 } GB_DataRec, *GB_Data;
 

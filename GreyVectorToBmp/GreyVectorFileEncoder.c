@@ -11,6 +11,8 @@ void GreyVectorFile_Encoder_ClearCache(GVF_Encoder me)
 
 	if (me->gbWidthTable)
 		GreyBit_Free(me->gbMem, me->gbWidthTable);
+	if (me->gbHoriOffTable)
+		GreyBit_Free(me->gbMem, me->gbHoriOffTable);
 	if (me->gbOffsetTable)
 		GreyBit_Free(me->gbMem, me->gbOffsetTable);
 	if (me->pnGreySize)
@@ -72,6 +74,7 @@ GB_INT32 GreyVectorFile_Encoder_Delete(GB_Encoder encoder, GB_UINT32 nCode)
 {
 	GVF_Encoder me = (GVF_Encoder)encoder;
 	me->gbOffsetTable[nCode] = 0;
+	me->gbHoriOffTable[nCode] = 0;
 	me->gbWidthTable[nCode] = 0;
 	if (me->gpGreyBits[nCode])
 	{
@@ -109,6 +112,7 @@ GB_INT32 GreyVectorFile_Encoder_Encode(GB_Encoder encoder, GB_UINT32 nCode, GB_D
 	me->pnGreySize[nCode] = (GB_UINT16)GreyVector_Outline_GetSizeEx((GB_BYTE)outline->n_contours, (GB_BYTE)outline->n_points);
 	me->gbOffsetTable[nCode] = SET_RAM(nCode);
 	me->gbWidthTable[nCode] = (GB_BYTE)nWidth;
+	me->gbHoriOffTable[nCode] = (GB_BYTE)pData->horioff;
 	return 0;
 }
 
@@ -135,6 +139,17 @@ GB_INT32 GreyVectorFile_Encoder_WriteAll(GVF_Encoder me)
 			pData = (GB_BYTE *)&me->gbWidthTable[nMinCode];
 			nDataSize = (GB_UINT16)nSectionLen;
 			GreyBit_Stream_Write(me->gbStream, pData, nSectionLen);
+		}
+	}
+	for (nSection = 0; nSection < UNICODE_SECTION_NUM; ++nSection)
+	{
+		UnicodeSection_GetSectionInfo(nSection, &nMinCode, &nMaxCode);
+		nSectionLen = nMaxCode - nMinCode + 1;
+		if (me->gbInfoHeader.gbiWidthSection.gbSectionOff[nSection])
+		{
+			pData = (GB_BYTE *)&me->gbHoriOffTable[nMinCode];
+			nDataSize = nSectionLen;
+			GreyBit_Stream_Write(me->gbStream, pData, nDataSize);
 		}
 	}
 	for (nSection = 0; nSection < UNICODE_SECTION_NUM; ++nSection)
@@ -169,6 +184,7 @@ GB_INT32 GreyVectorFile_Encoder_BuildAll(GVF_Encoder me)
 	GB_UINT32 nCount;
 	GB_UINT32 nGreyBitSize;
 	GB_UINT32 nOffSetTableSize;
+	GB_UINT32 nHoriOffTableSize;
 	GB_UINT32 nWidthTableSize;
 	GB_INT16 nCode;
 	GB_INT16 nCodea;
@@ -179,6 +195,7 @@ GB_INT32 GreyVectorFile_Encoder_BuildAll(GVF_Encoder me)
 
 	nWidthTableSize = 0;
 	nOffSetTableSize = 0;
+	nHoriOffTableSize = 0;
 	nGreyBitSize = 0;
 	nCount = 0;
 	for (nSection = 0; nSection < UNICODE_SECTION_NUM; ++nSection)
@@ -192,6 +209,7 @@ GB_INT32 GreyVectorFile_Encoder_BuildAll(GVF_Encoder me)
 				me->gbInfoHeader.gbiWidthSection.gbSectionOff[nSection] = (GB_UINT16)nWidthTableSize + 1;
 				me->gbInfoHeader.gbiIndexSection.gbSectionOff[nSection] = (GB_INT16)(nOffSetTableSize >> 2) + 1;
 				nWidthTableSize += nSectionLen;
+				nHoriOffTableSize += nSectionLen;
 				nOffSetTableSize += sizeof(GB_UINT32) * nSectionLen;
 				break;
 			}
@@ -208,8 +226,9 @@ GB_INT32 GreyVectorFile_Encoder_BuildAll(GVF_Encoder me)
 		}
 	}
 	me->gbInfoHeader.gbiCount = nCount;
-	me->gbInfoHeader.gbiOffGreyBits = nOffSetTableSize + nWidthTableSize;
-	me->gbInfoHeader.gbiOffsetTabOff = nWidthTableSize;
+	me->gbInfoHeader.gbiOffGreyBits = nOffSetTableSize + nHoriOffTableSize + nWidthTableSize;
+	me->gbInfoHeader.gbiOffsetTabOff = nHoriOffTableSize + nWidthTableSize;
+	me->gbInfoHeader.gbiHoriOffTabOff = nWidthTableSize;
 	me->gbInfoHeader.gbiWidthTabOff = 0;
 	me->gbInfoHeader.gbiSize = sizeof(GREYVECTORINFOHEADER);
 	me->gbFileHeader.gbfTag[0] = 'g';
@@ -249,11 +268,13 @@ void GreyVectorFile_Encoder_Done(GB_Encoder encoder)
 GB_INT32 GreyVectorFile_Encoder_Init(GVF_Encoder me)
 {
 	me->gbWidthTable = (GB_BYTE *)GreyBit_Malloc(me->gbMem, MAX_COUNT);
+	me->gbHoriOffTable = (GB_BYTE *)GreyBit_Malloc(me->gbMem, MAX_COUNT);
 	me->gbOffsetTable = (GB_UINT32 *)GreyBit_Malloc(me->gbMem, sizeof(GB_UINT32)*MAX_COUNT);
 	me->gpGreyBits = (GB_Outline *)GreyBit_Malloc(me->gbMem, sizeof(GB_Outline)*MAX_COUNT);
 	me->pnGreySize = (GB_UINT16 *)GreyBit_Malloc(me->gbMem, sizeof(GB_UINT16)*MAX_COUNT);
 	me->nCacheItem = MAX_COUNT;
 	GreyBit_Memset_Sys(me->gbWidthTable, 0, MAX_COUNT);
+	GreyBit_Memset_Sys(me->gbHoriOffTable, 0, MAX_COUNT);
 	return 0;
 }
 
