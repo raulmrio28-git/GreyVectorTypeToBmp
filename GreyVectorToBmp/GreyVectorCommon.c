@@ -77,6 +77,7 @@ GVF_Outline GreyVector_Outline_NewByGB(GB_Library library, GB_Outline source)
 			outline->points[ia].x = (GB_BYTE)source->points[ia].x >> 6;
 			outline->points[ia].y = (GB_BYTE)source->points[ia].y >> 6;
 			outline->points[ia].x = (GB_BYTE)source->tags[ia] & 1 | (2 * outline->points[ia].x);
+			outline->points[ia].y = (GB_BYTE)(source->tags[ia] >> 1) & 1 | (2 * outline->points[ia].y);
 		}
 	}
 	return outline;
@@ -97,7 +98,7 @@ GB_Outline GreyBitType_Outline_NewByGVF(GB_Library library, GVF_Outline source)
 		{
 			outline->points[ia].x = source->points[ia].x >> 1 << 6;
 			outline->points[ia].y = source->points[ia].y << 6;
-			outline->tags[ia] = source->points[ia].x & 1;
+			outline->tags[ia] = source->points[ia].y & 1 | source->points[ia].x & 1;
 		}
 	}
 	return outline;
@@ -115,8 +116,8 @@ GB_Outline GreyBitType_Outline_UpdateByGVF(GB_Outline outline, GVF_Outline sourc
 	for (ia = 0; ia < outline->n_points; ++ia)
 	{
 		outline->points[ia].x = source->points[ia].x >> 1 << 6;
-		outline->points[ia].y = source->points[ia].y << 6;
-		outline->tags[ia] = source->points[ia].x & 1;
+		outline->points[ia].y = source->points[ia].y >> 1 << 6;
+		outline->tags[ia] = (2 * (source->points[ia].y & 1)) | source->points[ia].x & 1;
 	}
 	return outline;
 }

@@ -21,6 +21,8 @@ extern "C"{
 #define GB_FALSE                   0
 #define GB_SUCCESS                 0
 #define GB_FAILED                  1
+#define GB_WIDTH_DEFAULT           0
+#define GB_HORIOFF_DEFAULT         0
 
 typedef void*           GBHANDLE;
 typedef char            GB_BOOL;
@@ -31,6 +33,7 @@ typedef short           GB_INT16;
 typedef long            GB_INT32;
 typedef GB_INT16        GB_Pos;
 typedef char            GB_CHAR;
+typedef char            GB_INT8;
 
 typedef enum{
     GB_FORMAT_NONE,

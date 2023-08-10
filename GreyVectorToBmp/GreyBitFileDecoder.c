@@ -114,18 +114,18 @@ GB_INT32 GreyBitFile_Decoder_Init(GBF_Decoder me)
 	nRet = GreyBitFile_Decoder_ReadHeader(me);
 	if (nRet < 0)
 		return nRet;
-	nDataSize = me->gbInfoHeader.gbiOffsetTabOff - me->gbInfoHeader.gbiWidthTabOff;
-	me->gbWidthTable = (GB_BYTE *)GreyBit_Malloc(me->gbMem, nDataSize);
+	nDataSize = me->gbInfoHeader.gbiHoriOffTabOff - me->gbInfoHeader.gbiWidthTabOff;
+	me->gbWidthTable = (GB_BYTE*)GreyBit_Malloc(me->gbMem, nDataSize);
 	GreyBit_Stream_Seek(me->gbStream, me->gbInfoHeader.gbiWidthTabOff + me->gbOffDataBits);
 	GreyBit_Stream_Read(me->gbStream, me->gbWidthTable, nDataSize);
 	nDataSizea = me->gbInfoHeader.gbiOffsetTabOff - me->gbInfoHeader.gbiHoriOffTabOff;
-	me->gbHoriOffTable = (char *)GreyBit_Malloc(me->gbMem, nDataSizea);
+	me->gbHoriOffTable = (GB_BYTE *)GreyBit_Malloc(me->gbMem, nDataSizea);
 	GreyBit_Stream_Seek(me->gbStream, me->gbInfoHeader.gbiHoriOffTabOff + me->gbOffDataBits);
 	GreyBit_Stream_Read(me->gbStream, me->gbHoriOffTable, nDataSizea);
 	nDataSizeb = me->gbInfoHeader.gbiOffGreyBits - me->gbInfoHeader.gbiOffsetTabOff;
-	me->gbOffsetTable = (unsigned int *)GreyBit_Malloc(me->gbMem, nDataSizeb);
+	me->gbOffsetTable = (GB_UINT32 *)GreyBit_Malloc(me->gbMem, nDataSizeb);
 	GreyBit_Stream_Seek(me->gbStream, me->gbInfoHeader.gbiOffsetTabOff + me->gbOffDataBits);
-	GreyBit_Stream_Read(me->gbStream,(GB_BYTE*)me->gbOffsetTable, nDataSizeb);
+	GreyBit_Stream_Read(me->gbStream, (GB_BYTE*)me->gbOffsetTable, nDataSizeb);
 	return 0;
 }
 

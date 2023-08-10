@@ -58,12 +58,14 @@ void GreyBitType_Format_Done(GB_Library library)
 
 GB_Bitmap GreyBitType_Bitmap_New(GBHANDLE library, GB_INT16 nWidth, GB_INT16 nHeight, GB_INT16 bitcount, GB_BYTE *pInitBuf)
 {
+	GB_INT32 nBufSize;
 	GB_Bitmap bitmap;
 	GB_INT16 currBmp_4;
 	GB_Library me = (GB_Library)library;
 
 	currBmp_4 = (bitcount * 8 * nWidth + 63) >> 6;
-	bitmap = (GB_Bitmap)GreyBit_Malloc(me->gbMem, nHeight * currBmp_4 + sizeof(GB_BitmapRec));
+	nBufSize = nHeight * currBmp_4;
+	bitmap = (GB_Bitmap)GreyBit_Malloc(me->gbMem, nBufSize + sizeof(GB_BitmapRec));
 	if (bitmap)
 	{
 		bitmap->width = nWidth;
@@ -71,8 +73,13 @@ GB_Bitmap GreyBitType_Bitmap_New(GBHANDLE library, GB_INT16 nWidth, GB_INT16 nHe
 		bitmap->bitcount = bitcount;
 		bitmap->pitch = currBmp_4;
 		bitmap->buffer = (GB_BYTE *)&bitmap[1];
+		if (!bitmap->buffer)
+		{
+			GreyBit_Free(me->gbMem, bitmap);
+			return 0;
+		}
 		if (pInitBuf)
-			GreyBit_Memcpy_Sys(bitmap->buffer, pInitBuf, nHeight * currBmp_4);
+			GreyBit_Memcpy_Sys(bitmap->buffer, pInitBuf, nBufSize);
 	}
 	return bitmap;
 }
@@ -80,6 +87,7 @@ GB_Bitmap GreyBitType_Bitmap_New(GBHANDLE library, GB_INT16 nWidth, GB_INT16 nHe
 void GreyBitType_Bitmap_Done(GBHANDLE library, GB_Bitmap bitmap)
 {
 	GB_Library me = (GB_Library)library;
+	GreyBit_Free(me->gbMem, bitmap->buffer);
 	GreyBit_Free(me->gbMem, bitmap);
 }
 

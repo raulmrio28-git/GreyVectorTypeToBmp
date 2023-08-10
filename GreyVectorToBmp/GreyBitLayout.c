@@ -259,6 +259,7 @@ int GreyBitType_Layout_ScaleBitmap(GB_Bitmap dst, GB_Bitmap src)
 		if (dst->bitcount == 8)
 		{
 			dst->width = src->width * dst->height / src->height;
+			dst->horioff = src->horioff * dst->height / src->height;
 			dst->pitch = dst->width;
 			GreyBitType_Layout_BMP8Scale8(
 				dst->buffer,
@@ -273,6 +274,7 @@ int GreyBitType_Layout_ScaleBitmap(GB_Bitmap dst, GB_Bitmap src)
 		else if (dst->bitcount == 1)
 		{
 			dst->width = src->width * dst->height / src->height;
+			dst->horioff = src->horioff * dst->height / src->height;
 			dst->pitch = dst->width >> 3;
 			if (!dst->pitch)
 				dst->pitch = 1;
@@ -290,6 +292,7 @@ int GreyBitType_Layout_ScaleBitmap(GB_Bitmap dst, GB_Bitmap src)
 	else if (dst->bitcount == 8 && src->bitcount == 1)
 	{
 		dst->width = src->width * dst->height / src->height;
+		dst->horioff = src->horioff * dst->height / src->height;
 		dst->pitch = dst->width;
 		if (dst->height == src->height)
 			GreyBitType_Layout_BMP1To8(
@@ -315,6 +318,7 @@ int GreyBitType_Layout_ScaleBitmap(GB_Bitmap dst, GB_Bitmap src)
 	else if (dst->bitcount == 1 && src->bitcount == 8)
 	{
 		dst->width = src->width * dst->height / src->height;
+		dst->horioff = src->horioff * dst->height / src->height;
 		dst->pitch = dst->width >> 3;
 		if (!dst->pitch)
 			dst->pitch = 1;
@@ -354,6 +358,7 @@ GBHANDLE GreyBitType_Layout_New(GBHANDLE loader, GB_INT16 nSize, GB_INT16 nBitCo
 		me->gbMem = my_loader->gbMem;
 		me->gbStream = my_loader->gbStream;
 		me->gbDecoder = my_loader->gbDecoder;
+		me->dwCode = 0xffff;
 		me->nSize = nSize;
 		me->nBitCount = nBitCount;
 		me->bBold = bBold;
@@ -374,7 +379,7 @@ GB_INT32 GreyBitType_Layout_GetWidth(GBHANDLE layout, GB_UINT32 nCode)
 {
 	GB_Layout me = (GB_Layout)layout;
 
-	return GreyBit_Decoder_GetWidth(me->gbDecoder, nCode, me->nSize);
+	return GreyBit_Decoder_GetAdvance(me->gbDecoder, nCode, me->nSize);
 }
 
 int GreyBitType_Layout_LoadChar(GBHANDLE layout, GB_UINT32 nCode, GB_Bitmap *pBmp)
@@ -385,44 +390,49 @@ int GreyBitType_Layout_LoadChar(GBHANDLE layout, GB_UINT32 nCode, GB_Bitmap *pBm
 
 	if (!me->gbBitmap)
 		return -1;
-	if (GreyBit_Decoder_Decode(me->gbDecoder, nCode, &data, me->nSize))
-		return -1;
-#ifdef ENABLE_GREYVECTORFILE
-	if (data.format == GB_FORMAT_BITMAP)
+	if (me->dwCode != nCode)
 	{
-		bitmap = (GB_Bitmap)data.data;
-	}
-	else
-	{
-
-		if (data.format != 2)
+		if (GreyBit_Decoder_Decode(me->gbDecoder, nCode, &data, me->nSize))
 			return -1;
-		if (me->gbBitmap8)
-			bitmap = me->gbBitmap8;
+#ifdef ENABLE_GREYVECTORFILE
+		if (data.format == GB_FORMAT_BITMAP)
+		{
+			bitmap = (GB_Bitmap)data.data;
+		}
 		else
-			bitmap = me->gbBitmap;
-		bitmap->width = data.width;
-		bitmap->pitch = data.width;
-		GreyBit_Memset_Sys(bitmap->buffer, 0, bitmap->height * bitmap->pitch);
-		GreyBit_Raster_Render(me->gbRaster, bitmap, data.data);
-	}
+		{
+			if (data.format != GB_FORMAT_OUTLINE)
+				return -1;
+			if (me->gbBitmap8)
+				bitmap = me->gbBitmap8;
+			else
+				bitmap = me->gbBitmap;
+			bitmap->width = data.width;
+			bitmap->pitch = data.width;
+			bitmap->horioff = data.horioff;
+			GreyBit_Memset_Sys(bitmap->buffer, 0, bitmap->height * bitmap->pitch);
+			GreyBit_Raster_Render(me->gbRaster, bitmap, data.data);
+		}
 #else
-	bitmap = (GB_Bitmap)data.data;
+		bitmap = (GB_Bitmap)data.data;
 #endif //ENABLE_GREYVECTORFILE
-	if (bitmap->bitcount == me->gbBitmap->bitcount && bitmap->height == me->gbBitmap->height)
-	{
-		me->gbBitmap->pitch = bitmap->pitch;
-		me->gbBitmap->width = bitmap->width;
-		bitmap->buffer = (GB_BYTE *)GreyBitType_Bitmap_SwitcBuffer(me->gbBitmap, bitmap->buffer);
+		if (bitmap->bitcount == me->gbBitmap->bitcount && bitmap->height == me->gbBitmap->height)
+		{
+			me->gbBitmap->pitch = bitmap->pitch;
+			me->gbBitmap->width = bitmap->width;
+			me->gbBitmap->horioff = bitmap->horioff;
+			bitmap->buffer = (GB_BYTE *)GreyBitType_Bitmap_SwitcBuffer(me->gbBitmap, bitmap->buffer);
+		}
+		else
+		{
+			GreyBitType_Layout_ScaleBitmap(me->gbBitmap, bitmap);
+		}
+		if (me->bBold)
+			GreyBitType_Layout_Bold(me);
+		if (me->bItalic)
+			GreyBitType_Layout_Italic(me);
+		me->dwCode = nCode;
 	}
-	else
-	{
-		GreyBitType_Layout_ScaleBitmap(me->gbBitmap, bitmap);
-	}
-	if (me->bBold)
-		GreyBitType_Layout_Bold(me);
-	if (me->bItalic)
-		GreyBitType_Layout_Italic(me);
 	if (pBmp)
 		*pBmp = me->gbBitmap;
 	return 0;

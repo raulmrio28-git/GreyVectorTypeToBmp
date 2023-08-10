@@ -36,6 +36,7 @@ typedef struct _GB_LayoutRec
 #ifdef ENABLE_GREYVECTORFILE
 	void *gbRaster;
 #endif //ENABLE_GREYVECTORFILE
+	GB_UINT32 dwCode;
 	GB_BYTE *gbSwitchBuf;
 	GB_INT32 nSwitchBufLen;
 	GB_INT16 nWidth;

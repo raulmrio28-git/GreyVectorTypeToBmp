@@ -111,8 +111,8 @@ GB_INT32 GreyVectorFile_Decoder_Init(GVF_Decoder me)
 	nRet = GreyVectorFile_Decoder_ReadHeader(me);
 	if (nRet < 0)
 		return nRet;
-	nDataSize = me->gbInfoHeader.gbiOffsetTabOff - me->gbInfoHeader.gbiWidthTabOff;
-	me->gbWidthTable = (GB_BYTE *)GreyBit_Malloc(me->gbMem, nDataSize);
+	nDataSize = me->gbInfoHeader.gbiHoriOffTabOff - me->gbInfoHeader.gbiWidthTabOff;
+	me->gbWidthTable = (GB_BYTE*)GreyBit_Malloc(me->gbMem, nDataSize);
 	GreyBit_Stream_Seek(me->gbStream, me->gbInfoHeader.gbiWidthTabOff + me->gbOffDataBits);
 	GreyBit_Stream_Read(me->gbStream, me->gbWidthTable, nDataSize);
 	nDataSizea = me->gbInfoHeader.gbiOffsetTabOff - me->gbInfoHeader.gbiHoriOffTabOff;
