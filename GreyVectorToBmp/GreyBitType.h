@@ -33,14 +33,26 @@ typedef short           GB_INT16;
 typedef long            GB_INT32;
 typedef GB_INT16        GB_Pos;
 typedef char            GB_CHAR;
-typedef char            GB_INT8;
+typedef signed char     GB_INT8;
 
-typedef enum{
-    GB_FORMAT_NONE,
-    GB_FORMAT_BITMAP,
-    GB_FORMAT_OUTLINE,
-    GB_FROMAT_MAX
+typedef enum {
+	GB_FORMAT_NONE,
+	GB_FORMAT_BITMAP,
+	GB_FORMAT_OUTLINE,
+	GB_FORMAT_STREAM,
+	GB_FROMAT_MAX
 }GB_DataFormat;
+
+typedef enum {
+	GB_PARAM_NONE,
+	GB_PARAM_CACHEITEM,     // Cached item number
+#ifdef ENABLE_ENCODER
+	GB_PARAM_HEIGHT,        // font height
+	GB_PARAM_BITCOUNT,      // GBF bit count
+	GB_PARAM_COMPRESS,      // Whether of not compress
+#endif
+	GB_PARAM_MAX
+}GB_Param;
 
 typedef struct  _GB_DataRec
 {
@@ -155,8 +167,11 @@ extern void         GreyBitType_Creator_Done(GBHANDLE creator);
 
 // Loader
 extern GBHANDLE     GreyBitType_Loader_New(GBHANDLE library, const GB_CHAR* filepathname);
+extern GBHANDLE     GreyBitType_Loader_New_Stream(GBHANDLE library, GBHANDLE stream, GB_INT32 size);
 extern GBHANDLE     GreyBitType_Loader_New_Memory(GBHANDLE library, void *pBuf, GB_INT32 nBufSize);
-extern int          GreyBitType_Loader_SetParam(GBHANDLE loader, void *pParam);
+extern GB_INT32     GreyBitType_Loader_GetCount(GBHANDLE loader);
+extern GB_INT32     GreyBitType_Loader_GetHeight(GBHANDLE loader);
+extern int          GreyBitType_Loader_SetParam(GBHANDLE loader, GB_Param nParam, GB_UINT32 dwParam);
 extern GB_BOOL      GreyBitType_Loader_IsExist(GBHANDLE loader, GB_UINT32 nCode);
 extern void         GreyBitType_Loader_Done(GBHANDLE loader);
 
