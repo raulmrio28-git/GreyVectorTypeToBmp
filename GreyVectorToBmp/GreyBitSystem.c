@@ -126,6 +126,7 @@ GB_Stream GreyBit_Stream_New(const char* filepathname, char bcreate)
 	stream = (GB_Stream)GreyBit_Malloc_Sys(sizeof(GB_StreamRec));
 	if (stream)
 	{
+		stream->parent = 0;
 		stream->read = GreyBit_Read_Sys;
 		stream->write = GreyBit_Write_Sys;
 		stream->seek = GreyBit_Seek_Sys;
@@ -133,6 +134,8 @@ GB_Stream GreyBit_Stream_New(const char* filepathname, char bcreate)
 		stream->handler = f;
 		stream->size = GreyBit_GetSize_Sys(stream->handler);
 		stream->pfilename = (char *)GreyBit_Malloc_Sys(GreyBit_Strlen_Sys(filepathname) + 1);
+		stream->offset = 0;
+		stream->refcnt = 1;
 		GreyBit_Strcpy_Sys(stream->pfilename, filepathname);
 	}
 	return stream;
@@ -149,6 +152,7 @@ GB_Stream GreyBit_Stream_New_Memory(const void *pBuf, GB_INT32 nBufSize)
 	stream = (GB_Stream)GreyBit_Malloc_Sys(sizeof(GB_StreamRec));
 	if (stream)
 	{
+		stream->parent = 0;
 		stream->read = GreyBit_Read_Mem;
 		stream->write = GreyBit_Write_Mem;
 		stream->seek = GreyBit_Seek_Mem;
@@ -156,6 +160,31 @@ GB_Stream GreyBit_Stream_New_Memory(const void *pBuf, GB_INT32 nBufSize)
 		stream->handler = f;
 		stream->size = nBufSize;
 		stream->pfilename = 0;
+		stream->offset = 0;
+		stream->refcnt = 1;
+	}
+	return stream;
+}
+
+GB_Stream    GreyBit_Stream_New_Child(GB_Stream parent)
+{
+	GB_Stream stream;
+
+	if (!parent)
+		return 0;
+	stream = (GB_Stream)GreyBit_Malloc_Sys(sizeof(GB_StreamRec));
+	if (stream)
+	{
+		++parent->refcnt;
+		stream->read = GreyBit_Read_Sys;
+		stream->parent = parent;
+		stream->write = GreyBit_Write_Sys;
+		stream->seek = GreyBit_Seek_Sys;
+		stream->close = GreyBit_Close_Sys;
+		stream->handler = parent->handler;
+		stream->size = parent->size;
+		stream->offset = parent->offset;
+		stream->refcnt = 1;
 	}
 	return stream;
 }
@@ -180,6 +209,26 @@ GB_INT32 GreyBit_Stream_Seek(GB_Stream stream, GB_INT32 pos)
 {
 	if (stream->seek)
 		return stream->seek(stream->handler, pos);
+	else
+		return 0;
+}
+
+GB_INT32     GreyBit_Stream_Offset(GB_Stream stream, GB_INT32 offset, GB_INT32 size)
+{
+	if (stream->parent)
+	{
+		stream->offset = stream->parent->offset + offset;
+		if (size)
+			stream->size = size;
+		else
+			stream->size = stream->parent->size - stream->offset;
+	}
+	else
+	{
+		stream->offset = offset;
+	}
+	if (stream->seek)
+		return stream->seek(stream->handler, stream->offset);
 	else
 		return 0;
 }
