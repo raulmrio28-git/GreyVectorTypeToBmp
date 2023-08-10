@@ -26,10 +26,10 @@ typedef struct tagGREYVECTORFILEHEADER
 } GREYVECTORFILEHEADER;
 #pragma pack()
 
-typedef struct tagSECTIONOINFO
+typedef struct tagV_SECTIONOINFO
 {
 	GB_UINT16 gbSectionOff[146];
-} SECTIONOINFO;
+} V_SECTIONOINFO;
 
 #pragma pack(1)
 typedef struct tagGREYVECTORINFOHEADER
@@ -43,8 +43,8 @@ typedef struct tagGREYVECTORINFOHEADER
 	GB_UINT32 gbiWidthTabOff;
 	GB_UINT32 gbiOffsetTabOff;
 	GB_UINT32 gbiOffGreyBits;
-	SECTIONOINFO gbiWidthSection;
-	SECTIONOINFO gbiIndexSection;
+	V_SECTIONOINFO gbiWidthSection;
+	V_SECTIONOINFO gbiIndexSection;
 } GREYVECTORINFOHEADER;
 #pragma pack()
 
@@ -84,7 +84,7 @@ typedef struct _GVF_EncoderRec
 	GB_BYTE *gbWidthTable;
 	GB_UINT32 *gbOffsetTable;
 	GB_Outline *gpGreyBits;
-	GB_INT32 *pnGreySize;
+	GB_UINT16 *pnGreySize;
 } GVF_EncoderRec, *GVF_Encoder;
 
 #define TAG_MASK 0x1

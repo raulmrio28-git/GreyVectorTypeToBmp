@@ -152,6 +152,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="GreyBitCodec.c" />
+    <ClCompile Include="GreyBitCreator.c" />
+    <ClCompile Include="GreyBitFileEncoder.c" />
+    <ClCompile Include="GreyBitFile.c" />
+    <ClCompile Include="GreyBitFileDecoder.c" />
     <ClCompile Include="GreyBitLayout.c" />
     <ClCompile Include="GreyBitLoader.c" />
     <ClCompile Include="GreyBitRaster.c" />
@@ -161,11 +165,15 @@
     <ClCompile Include="GreyVectorCommon.c" />
     <ClCompile Include="GreyVectorFile.c" />
     <ClCompile Include="GreyVectorFileDecoder.c" />
+    <ClCompile Include="GreyVectorFileEncoder.c" />
     <ClCompile Include="GreyVectorToBmp.cpp" />
     <ClCompile Include="UnicodeSection.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GreyBitCodec.h" />
+    <ClInclude Include="GreyBitFile.h" />
+    <ClInclude Include="GreyBitFileDecoder.h" />
+    <ClInclude Include="GreyBitFileEncoder.h" />
     <ClInclude Include="GreyBitRaster.h" />
     <ClInclude Include="GreyBitSystem.h" />
     <ClInclude Include="GreyBitType.h" />
@@ -173,6 +181,7 @@
     <ClInclude Include="GreyVectorCommon.h" />
     <ClInclude Include="GreyVectorFile.h" />
     <ClInclude Include="GreyVectorFileDecoder.h" />
+    <ClInclude Include="GreyVectorFileEncoder.h" />
     <ClInclude Include="UnicodeSection.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,6 +1,11 @@
 #include "GreyBitType.h"
 #include "GreyBitType_Def.h"
+#ifdef ENABLE_GREYBITFILE
+#include "GreyBitFile.h"
+#endif //ENABLE_GREYBITFILE
+#ifdef ENABLE_GREYVECTORFILE
 #include "GreyVectorFile.h"
+#endif //ENABLE_GREYVECTORFILE
 
 extern void GreyBit_Close_Sys(GB_IOHandler f);
 extern void* GreyBit_Malloc_Sys(GB_INT32 size);
@@ -23,8 +28,14 @@ GB_Format GreyBitType_Format_Init(GB_Library library)
 {
 	GB_Format format;
 
+#ifdef ENABLE_GREYBITFILE
+	format = GreyBitFile_Format_New(library);
+	GreyBitType_Format_Insert(library, format);
+#endif //ENABLE_GREYBITFILE
+#ifdef ENABLE_GREYVECTORFILE
 	format = GreyVectorFile_Format_New(library);
 	GreyBitType_Format_Insert(library, format);
+#endif //ENABLE_GREYVECTORFILE
 	return library->gbFormatHeader;
 }
 
@@ -32,6 +43,7 @@ void GreyBit_Format_Done(GB_Format format, GB_Memory mem)
 {
 	GreyBit_Free(mem, format);
 }
+
 void GreyBitType_Format_Done(GB_Library library)
 {
 	GB_Format next; 
@@ -186,6 +198,19 @@ GB_Decoder GreyBit_Format_DecoderNew(GB_Format format, GB_Loader loader, GB_Stre
 		result = 0;
 	return result;
 }
+
+#ifdef ENABLE_ENCODER
+GB_Encoder GreyBit_Format_EncoderNew(GB_Format format, GB_Creator creator, GB_Stream stream)
+{
+	GB_Encoder result;
+
+	if (format->encodernew)
+		result = format->encodernew(creator, stream);
+	else
+		result = 0;
+	return result;
+}
+#endif // ENABLE_ENCODER
 
 int GreyBit_Format_Probe(GB_Format format, GB_Stream stream)
 {

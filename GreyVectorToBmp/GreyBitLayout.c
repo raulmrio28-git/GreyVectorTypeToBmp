@@ -134,7 +134,7 @@ int GreyBitType_Layout_Italic(GB_Layout layout)
 		xMaxb = bitmap->pitch;
 		for (ya = 0; ya < yMax; ++ya)
 		{
-			nOffa = (ya >> 2) - nHalfOffMax;
+			nOffa = (GB_INT16)(ya >> 2) - nHalfOffMax;
 			bitMove = 0;
 			if (nOffa >= 0)
 			{

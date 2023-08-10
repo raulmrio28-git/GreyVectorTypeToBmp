@@ -51,6 +51,21 @@
     <ClCompile Include="GreyBitRaster.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GreyBitFileDecoder.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GreyBitFile.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GreyBitCreator.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GreyBitFileEncoder.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GreyVectorFileEncoder.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GreyBitCodec.h">
@@ -78,6 +93,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GreyBitRaster.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GreyBitFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GreyBitFileDecoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GreyBitFileEncoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GreyVectorFileEncoder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
