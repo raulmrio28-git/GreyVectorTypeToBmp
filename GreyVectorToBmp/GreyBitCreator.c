@@ -30,7 +30,7 @@ GB_Encoder GreyBitType_Creator_Probe(GB_Library library, GB_Creator creator)
 	return encoder;
 }
 
-GBHANDLE GreyBitType_Creator_New(GBHANDLE library, const char *filepathname)
+GBHANDLE GreyBitType_Creator_New(GBHANDLE library, const GB_CHAR* filepathname)
 {
 	GB_Library my_library;
 	GB_Creator creator;

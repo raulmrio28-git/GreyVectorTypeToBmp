@@ -171,7 +171,7 @@ extern GBHANDLE     GreyBitType_Loader_New_Stream(GBHANDLE library, GBHANDLE str
 extern GBHANDLE     GreyBitType_Loader_New_Memory(GBHANDLE library, void *pBuf, GB_INT32 nBufSize);
 extern GB_INT32     GreyBitType_Loader_GetCount(GBHANDLE loader);
 extern GB_INT32     GreyBitType_Loader_GetHeight(GBHANDLE loader);
-extern int          GreyBitType_Loader_SetParam(GBHANDLE loader, GB_Param nParam, GB_UINT32 dwParam);
+extern int          GreyBitType_Loader_SetParam(GBHANDLE loader, void* pParam);
 extern GB_BOOL      GreyBitType_Loader_IsExist(GBHANDLE loader, GB_UINT32 nCode);
 extern void         GreyBitType_Loader_Done(GBHANDLE loader);
 
