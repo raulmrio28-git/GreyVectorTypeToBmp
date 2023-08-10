@@ -83,6 +83,7 @@ void GreyBitType_Bitmap_Done(GBHANDLE library, GB_Bitmap bitmap)
 	GreyBit_Free(me->gbMem, bitmap);
 }
 
+#ifdef ENABLE_GREYVECTORFILE
 GB_Outline GreyBitType_Outline_New(GBHANDLE library, GB_INT16 n_contours, GB_INT16 n_points)
 {
 	GB_Outline outline; 
@@ -187,6 +188,7 @@ void GreyBitType_Outline_Done(GBHANDLE library, GB_Outline outline)
 	GB_Library me = (GB_Library)library;
 	GreyBit_Free(me->gbMem, outline);
 }
+#endif //ENABLE_GREYVECTORFILE
 
 GB_Decoder GreyBit_Format_DecoderNew(GB_Format format, GB_Loader loader, GB_Stream stream)
 {

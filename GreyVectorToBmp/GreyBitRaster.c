@@ -2,6 +2,7 @@
 #include "GreyBitType_Def.h"
 #include "GreyBitRaster.h"
 
+#ifdef ENABLE_GREYVECTORFILE
 typedef struct TBand_
 {
 	int min;
@@ -1397,3 +1398,4 @@ void GreyBit_Raster_Done(void *raster)
 	PRaster me = (PRaster)raster;
 	GreyBit_Free(me->gbMem, raster);
 }
+#endif //ENABLE_GREYVECTORFILE

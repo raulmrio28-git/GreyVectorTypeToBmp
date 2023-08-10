@@ -3,6 +3,10 @@
 #include "GreyBitType.h"
 #include "GreyBitSystem.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct _GB_FormatRec GB_FormatRec, *GB_Format;
 typedef struct _GB_DecoderRec GB_DecoderRec, *GB_Decoder;
 typedef struct _GB_EncoderRec GB_EncoderRec, *GB_Encoder;
@@ -29,7 +33,9 @@ typedef struct _GB_LayoutRec
 	GB_Decoder gbDecoder;
 	GB_Bitmap gbBitmap;
 	GB_Bitmap gbBitmap8;
+#ifdef ENABLE_GREYVECTORFILE
 	void *gbRaster;
+#endif //ENABLE_GREYVECTORFILE
 	GB_BYTE *gbSwitchBuf;
 	GB_INT32 nSwitchBufLen;
 	GB_INT16 nWidth;
@@ -99,5 +105,9 @@ struct _GB_EncoderRec
 	GB_ENCODER_DONE done;
 };
 #endif //ENABLE_ENCODER
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //GREYBITTYPE_DEF_H_

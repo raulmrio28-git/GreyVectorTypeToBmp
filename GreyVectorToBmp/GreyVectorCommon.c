@@ -1,5 +1,6 @@
 #include "GreyVectorCommon.h"
 
+#ifdef ENABLE_GREYVECTORFILE
 GVF_Outline GreyVector_Outline_New(GB_Library library, GB_INT16 n_contours, GB_INT16 n_points)
 {
 	GVF_Outline outline;
@@ -119,3 +120,4 @@ GB_Outline GreyBitType_Outline_UpdateByGVF(GB_Outline outline, GVF_Outline sourc
 	}
 	return outline;
 }
+#endif //ENABLE_GREYVECTORFILE

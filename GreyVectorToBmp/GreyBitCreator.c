@@ -3,6 +3,7 @@
 #include "GreyBitSystem.h"
 #include "GreyBitCodec.h"
 
+#ifdef ENABLE_ENCODER
 extern int GreyBit_Format_Probe(GB_Format format, GB_Stream stream);
 extern GB_Encoder GreyBit_Format_EncoderNew(GB_Format format, GB_Creator creator, GB_Stream stream);
 
@@ -102,3 +103,4 @@ void GreyBitType_Creator_Done(GBHANDLE creator)
 		GreyBit_Stream_Done(me->gbStream);
 	GreyBit_Free(me->gbMem, creator);
 }
+#endif //ENABLE_ENCODER

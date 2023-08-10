@@ -2,6 +2,11 @@
 #define GREYBITRASTER_H_
 #include "GreyBitType.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifdef ENABLE_GREYVECTORFILE
 #define DEFAULT_POOL_SIZE (16384)
 
 typedef struct GB_BBox_
@@ -55,5 +60,10 @@ typedef void(*GB_SpanFunc)(int y, int count, const GB_Span* spans,void* user);
 extern void* GreyBit_Raster_New(GB_Library library, int nPoolSize);
 extern int GreyBit_Raster_Render(void *raster, GB_Bitmap tobitmap, GB_Outline fromoutline);
 extern void GreyBit_Raster_Done(void *raster);
+#endif //ENABLE_GREYVECTORFILE
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //GREYBITRASTER_H_

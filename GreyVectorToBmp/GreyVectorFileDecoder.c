@@ -3,6 +3,7 @@
 #include "GreyVectorCommon.h"
 #include "GreyVectorFileDecoder.h"
 
+#ifdef ENABLE_GREYVECTORFILE
 GB_UINT32 GreyVectorFile_Decoder_GetDataOffset(GVF_Decoder me, GB_UINT32 nCode)
 {
 	GB_UINT32 nOffset;
@@ -232,3 +233,4 @@ GB_Decoder GreyVectorFile_Decoder_New(GB_Loader loader, GB_Stream stream)
 	}
 	return (GB_Decoder)decoder;
 }
+#endif //ENABLE_GREYVECTORFILE

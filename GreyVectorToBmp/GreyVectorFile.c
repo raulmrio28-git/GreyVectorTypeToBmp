@@ -2,6 +2,7 @@
 #include "GreyVectorFileDecoder.h"
 #include "GreyVectorFile.h"
 
+#ifdef ENABLE_GREYVECTORFILE
 GB_BOOL GreyVectorFile_Probe(GB_Stream stream)
 {
   GREYVECTORFILEHEADER fileHeader; 
@@ -26,3 +27,4 @@ GB_Format GreyVectorFile_Format_New(GB_Library library)
   }
   return format;
 }
+#endif //ENABLE_GREYVECTORFILE

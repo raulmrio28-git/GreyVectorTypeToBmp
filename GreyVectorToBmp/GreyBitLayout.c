@@ -361,7 +361,9 @@ GBHANDLE GreyBitType_Layout_New(GBHANDLE loader, GB_INT16 nSize, GB_INT16 nBitCo
 		me->gbBitmap = GreyBitType_Bitmap_New(me->gbLibrary, 2 * nSize, nSize, nBitCount, 0);
 		if (nBitCount != 8)
 			me->gbBitmap8 = GreyBitType_Bitmap_New(me->gbLibrary, 2 * nSize, nSize, 8, 0);
+#ifdef ENABLE_GREYVECTORFILE
 		me->gbRaster = (void *)GreyBit_Raster_New(me->gbLibrary, 0);
+#endif //ENABLE_GREYVECTORFILE
 		me->nSwitchBufLen = me->gbBitmap->height * me->gbBitmap->pitch;
 		me->gbSwitchBuf = (GB_BYTE *)GreyBit_Malloc(me->gbMem, me->nSwitchBufLen);
 	}
@@ -385,12 +387,14 @@ int GreyBitType_Layout_LoadChar(GBHANDLE layout, GB_UINT32 nCode, GB_Bitmap *pBm
 		return -1;
 	if (GreyBit_Decoder_Decode(me->gbDecoder, nCode, &data, me->nSize))
 		return -1;
-	if (data.format == 1)
+#ifdef ENABLE_GREYVECTORFILE
+	if (data.format == GB_FORMAT_BITMAP)
 	{
 		bitmap = (GB_Bitmap)data.data;
 	}
 	else
 	{
+
 		if (data.format != 2)
 			return -1;
 		if (me->gbBitmap8)
@@ -402,6 +406,9 @@ int GreyBitType_Layout_LoadChar(GBHANDLE layout, GB_UINT32 nCode, GB_Bitmap *pBm
 		GreyBit_Memset_Sys(bitmap->buffer, 0, bitmap->height * bitmap->pitch);
 		GreyBit_Raster_Render(me->gbRaster, bitmap, data.data);
 	}
+#else
+	bitmap = (GB_Bitmap)data.data;
+#endif //ENABLE_GREYVECTORFILE
 	if (bitmap->bitcount == me->gbBitmap->bitcount && bitmap->height == me->gbBitmap->height)
 	{
 		me->gbBitmap->pitch = bitmap->pitch;
@@ -433,7 +440,9 @@ void GreyBitType_Layout_Done(GBHANDLE layout)
 	}
 	if (me->gbBitmap8)
 		GreyBitType_Bitmap_Done(me->gbLibrary, me->gbBitmap8);
+#ifdef ENABLE_GREYVECTORFILE
 	if (me->gbRaster)
 		GreyBit_Raster_Done(me->gbRaster);
+#endif //ENABLE_GREYVECTORFILE
 	GreyBit_Free(me->gbMem, me);
 }

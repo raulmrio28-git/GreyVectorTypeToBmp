@@ -4,6 +4,11 @@
 #include "UnicodeSection.h"
 #include "GreyBitType_Def.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifdef ENABLE_GREYVECTORFILE
 typedef struct  _GVF_PointRec
 {
 	GB_BYTE x;
@@ -101,5 +106,10 @@ typedef struct _GVF_EncoderRec
 
 extern GB_Format GreyVectorFile_Format_New(GB_Library library);
 extern GB_BOOL GreyVectorFile_Probe(GB_Stream stream);
+#endif //ENABLE_GREYVECTORFILE
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //GREYVECTORFILE_H_
