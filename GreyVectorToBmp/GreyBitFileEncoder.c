@@ -220,7 +220,7 @@ GB_INT32 GreyBitFile_Encoder_WriteAll(GBF_Encoder me)
 		if (me->gbInfoHeader.gbiIndexSection.gbSectionOff[nSection])
 		{
 			pData = (GB_BYTE *)&me->gbOffsetTable[nMinCode];
-			nDataSize = 4 * (GB_UINT16)nSectionLen;
+			nDataSize = sizeof(GB_UINT32) * (GB_UINT16)nSectionLen;
 			GreyBit_Stream_Write(me->gbStream, pData, nDataSize);
 		}
 	}
@@ -283,7 +283,7 @@ GB_INT32 GreyBitFile_Encoder_BuildAll(GBF_Encoder me)
 				me->gbInfoHeader.gbiWidthSection.gbSectionOff[nSection] = (GB_UINT16)nWidthTableSize + 1;
 				me->gbInfoHeader.gbiIndexSection.gbSectionOff[nSection] = (GB_INT16)(nOffSetTableSize >> 2) + 1;
 				nWidthTableSize += nSectionLen;
-				nOffSetTableSize += 4 * nSectionLen;
+				nOffSetTableSize += sizeof(GB_UINT32) * nSectionLen;
 				break;
 			}
 		}
