@@ -5,6 +5,9 @@
 
 #ifdef ENABLE_GREYCOMBINEFILE
 #ifdef ENABLE_ENCODER
+
+GB_INT32 nCurrItemCount = 0;
+
 GB_INT32 GreyCombineFile_Encoder_GetCount(GB_Encoder encoder)
 {
 	GB_INT32 nCurrItem;
@@ -136,6 +139,25 @@ void GreyCombineFile_Encoder_Done(GB_Encoder encoder)
 		}
 	}
 	GreyBit_Free(me->gbMem, encoder);
+}
+
+GB_BOOL GreyCombineFile_Encoder_New_Creator(GB_Encoder encoder, GB_Library library)
+{
+	GCF_Encoder me = (GCF_Encoder)encoder;
+	GB_CHAR *pBuf;
+	if (me)
+	{
+		pBuf = (GB_CHAR*)GreyBit_Malloc(me->gbMem, GCF_BUF_SIZE * GCF_BUF_SIZE * 4);
+		if (nCurrItemCount >= GCF_ITEM_MAX)
+			return GB_FALSE;
+		me->gbCreator[nCurrItemCount] = GreyBitType_Creator_New_Memory(library, pBuf, GCF_BUF_SIZE * GCF_BUF_SIZE * 4);
+		if (me->gbCreator[nCurrItemCount])
+		{
+			nCurrItemCount++;
+			return GB_TRUE;
+		}	
+	}
+	return GB_FALSE;
 }
 
 GB_Encoder GreyCombineFile_Encoder_New(GB_Creator creator, GB_Stream stream)

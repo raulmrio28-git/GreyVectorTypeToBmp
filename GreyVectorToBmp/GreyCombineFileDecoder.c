@@ -9,13 +9,13 @@ GB_INT32 GreyCombineFile_Decoder_SetParam(GB_Decoder decoder, void* dwParam)
 	GB_Loader gbCurrLoader;
 	GCF_Decoder me = (GCF_Decoder)decoder;
 
-	for (nCurrItem = 0; nCurrItem < 5; ++nCurrItem)
+	for (nCurrItem = 0; nCurrItem < GCF_ITEM_MAX; ++nCurrItem)
 	{
 		gbCurrLoader = me->gbLoader[nCurrItem];
-		if (gbCurrLoader)
-			GreyBit_Decoder_SetParam(gbCurrLoader->gbDecoder, dwParam);
+		if (gbCurrLoader && GreyBit_Decoder_SetParam(gbCurrLoader->gbDecoder, dwParam) == 0)
+			return 0;
 	}
-	return nCurrCount;
+	return -1;
 }
 
 GB_INT32 GreyCombineFile_Decoder_GetCount(GB_Decoder decoder)
@@ -25,7 +25,7 @@ GB_INT32 GreyCombineFile_Decoder_GetCount(GB_Decoder decoder)
 	GB_Loader gbCurrLoader;
 	GCF_Decoder me = (GCF_Decoder)decoder;
 
-	for (nCurrItem = 0; nCurrItem < 5; ++nCurrItem)
+	for (nCurrItem = 0; nCurrItem < GCF_ITEM_MAX; ++nCurrItem)
 	{
 		gbCurrLoader = me->gbLoader[nCurrItem];
 		if (gbCurrLoader)
@@ -36,22 +36,15 @@ GB_INT32 GreyCombineFile_Decoder_GetCount(GB_Decoder decoder)
 
 GB_INT32 GreyCombineFile_Decoder_GetWidth(GB_Decoder decoder, GB_UINT32 nCode, GB_INT16 nSize)
 {
-	GB_INT32 nCurrItem = 0;
+	GB_INT32 nCurrItem;
 	GB_Loader gbCurrLoader;
 	GCF_Decoder me = (GCF_Decoder)decoder;
 
-	while (1)
+	for (nCurrItem = 0; nCurrItem < GCF_ITEM_MAX; ++nCurrItem)
 	{
 		gbCurrLoader = me->gbLoader[nCurrItem];
-		if (gbCurrLoader)
-		{
-			if (me->gbFileHeader.gbfInfo[nCurrItem].gbiHeight == nSize && GreyBitType_Loader_IsExist(me->gbLoader[nCurrItem], nCode))
-			{
-				break;
-			}
-		}
-		if (++nCurrItem >= GCF_ITEM_MAX)
-			return 0;
+		if (gbCurrLoader && (me->gbFileHeader.gbfInfo[nCurrItem].gbiHeight == nSize && GreyBitType_Loader_IsExist(me->gbLoader[nCurrItem], nCode)))
+			break;
 	}
 	return GreyBit_Decoder_GetWidth(gbCurrLoader->gbDecoder, nCode, nSize);
 }
@@ -63,59 +56,45 @@ GB_INT32 GreyCombineFile_Decoder_GetHeight(GB_Decoder decoder)
 
 GB_INT16  GreyCombineFile_Decoder_GetAdvance(GB_Decoder decoder, GB_UINT32 nCode, GB_INT16 nSize)
 {
-	int nCurrItem = 0;
+	GB_INT32 nCurrItem;
 	GB_Loader gbCurrLoader;
 	GCF_Decoder me = (GCF_Decoder)decoder;
 
-	while (1)
+	for (nCurrItem = 0; nCurrItem < GCF_ITEM_MAX; ++nCurrItem)
 	{
 		gbCurrLoader = me->gbLoader[nCurrItem];
-		if (gbCurrLoader)
-		{
-			if (me->gbFileHeader.gbfInfo[nCurrItem].gbiHeight == nSize && GreyBitType_Loader_IsExist(me->gbLoader[nCurrItem], nCode))
-			{
-				break;
-			}
-		}
-		if (++nCurrItem >= GCF_ITEM_MAX)
-			return 0;
+		if (gbCurrLoader && (me->gbFileHeader.gbfInfo[nCurrItem].gbiHeight == nSize && GreyBitType_Loader_IsExist(me->gbLoader[nCurrItem], nCode)))
+			break;
 	}
 	return GreyBit_Decoder_GetAdvance(gbCurrLoader->gbDecoder, nCode, nSize);
 }
 
 GB_INT32 GreyCombineFile_Decoder_Decode(GB_Decoder decoder, GB_UINT32 nCode, GB_Data pData, GB_INT16 nSize)
 {
-	int nCurrItem = 0; 
+	GB_INT32 nCurrItem; 
 	GB_Loader gbCurrLoader; 
 	GCF_Decoder me = (GCF_Decoder)decoder;
 
-	while (1)
+	for (nCurrItem = 0; nCurrItem < GCF_ITEM_MAX; ++nCurrItem)
 	{
 		gbCurrLoader = me->gbLoader[nCurrItem];
-		if (gbCurrLoader)
-		{
-			if (me->gbFileHeader.gbfInfo[nCurrItem].gbiHeight == nSize && GreyBitType_Loader_IsExist(me->gbLoader[nCurrItem], nCode))
-			{
-				break;
-			}
-		}
-		if (++nCurrItem >= GCF_ITEM_MAX)
-			return 0;
+		if (gbCurrLoader && (me->gbFileHeader.gbfInfo[nCurrItem].gbiHeight == nSize && GreyBitType_Loader_IsExist(me->gbLoader[nCurrItem], nCode)))
+			break;
 	}
 	return GreyBit_Decoder_Decode(gbCurrLoader->gbDecoder, nCode, pData, nSize);
 }
 
 void GreyCombineFile_Decoder_Done(GB_Decoder decoder)
 {
-	int i;
+	GB_INT32 nCurrItem;
 	GCF_Decoder me = (GCF_Decoder)decoder;
 
-	for (i = 0; i < GCF_ITEM_MAX; ++i)
+	for (nCurrItem = 0; nCurrItem < GCF_ITEM_MAX; ++nCurrItem)
 	{
-		if (me->gbLoader[i])
+		if (me->gbLoader[nCurrItem])
 		{
-			GreyBitType_Loader_Done(me->gbLoader[i]);
-			me->gbLoader[i] = 0;
+			GreyBitType_Loader_Done(me->gbLoader[nCurrItem]);
+			me->gbLoader[nCurrItem] = 0;
 		}
 	}
 	GreyBit_Free(me->gbMem, decoder);
