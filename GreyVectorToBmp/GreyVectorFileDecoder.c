@@ -140,6 +140,11 @@ GB_INT32 GreyVectorFile_Decoder_SetParam(GB_Decoder decoder, void *pParam)
 	return 0;
 }
 
+GB_INT32 GreyVectorFile_Decoder_GetHeight(GB_Decoder decoder)
+{
+	return 0;
+}
+
 GB_INT32 GreyVectorFile_Decoder_GetCount(GB_Decoder decoder)
 {
 	GVF_Decoder me = (GVF_Decoder)decoder;
@@ -275,6 +280,7 @@ GB_Decoder GreyVectorFile_Decoder_New(GB_Loader loader, GB_Stream stream)
 		decoder->gbDecoder.setparam = GreyVectorFile_Decoder_SetParam;
 		decoder->gbDecoder.getcount = GreyVectorFile_Decoder_GetCount;
 		decoder->gbDecoder.getwidth = GreyVectorFile_Decoder_GetWidth;
+		decoder->gbDecoder.getheight = GreyVectorFile_Decoder_GetHeight;
 		decoder->gbDecoder.getadvance = GreyVectorFile_Decoder_GetAdvance;
 		decoder->gbDecoder.decode = GreyVectorFile_Decoder_Decode;
 		decoder->gbDecoder.done = GreyVectorFile_Decoder_Done;

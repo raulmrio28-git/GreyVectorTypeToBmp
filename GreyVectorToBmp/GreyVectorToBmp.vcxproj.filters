@@ -66,6 +66,15 @@
     <ClCompile Include="GreyVectorFileEncoder.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GreyCombineFile.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GreyCombineFileDecoder.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GreyCombineFileEncoder.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GreyBitCodec.h">
@@ -105,6 +114,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GreyVectorFileEncoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GreyCombineFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GreyCombineFIleDecoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GreyCombineFIleEncoder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

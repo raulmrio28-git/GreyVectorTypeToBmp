@@ -1,5 +1,8 @@
 #include "GreyBitType.h"
 #include "GreyBitType_Def.h"
+#ifdef ENABLE_GREYCOMBINEFILE
+#include "GreyCombineFile.h"
+#endif //ENABLE_GREYCOMBINEFILE
 #ifdef ENABLE_GREYBITFILE
 #include "GreyBitFile.h"
 #endif //ENABLE_GREYBITFILE
@@ -28,6 +31,10 @@ GB_Format GreyBitType_Format_Init(GB_Library library)
 {
 	GB_Format format;
 
+#ifdef ENABLE_GREYCOMBINEFILE
+	format = GreyCombineFile_Format_New(library);
+	GreyBitType_Format_Insert(library, format);
+#endif //ENABLE_GREYCOMBINEFILE
 #ifdef ENABLE_GREYBITFILE
 	format = GreyBitFile_Format_New(library);
 	GreyBitType_Format_Insert(library, format);

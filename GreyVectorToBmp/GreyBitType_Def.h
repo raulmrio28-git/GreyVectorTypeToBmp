@@ -91,6 +91,7 @@ struct _GB_DecoderRec
 {
 	GB_DECODER_SETPARAM setparam;
 	GB_DECODER_GETCOUNT getcount;
+	GB_DECODER_GETHEIGHT getheight;
 	GB_DECODER_GETWIDTH getwidth;
 	GB_DECODER_GETADVANCE getadvance;
 	GB_DECODER_DECODE decode;

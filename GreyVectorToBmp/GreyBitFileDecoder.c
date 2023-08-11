@@ -144,6 +144,11 @@ GB_INT32 GreyBitFile_Decoder_SetParam(GB_Decoder decoder, void *pParam)
 	return 0;
 }
 
+GB_INT32 GreyBitFile_Decoder_GetHeight(GB_Decoder decoder)
+{
+	return 0;
+}
+
 GB_INT32 GreyBitFile_Decoder_GetCount(GB_Decoder decoder)
 {
 	GBF_Decoder me = (GBF_Decoder)decoder;
@@ -360,6 +365,7 @@ GB_Decoder GreyBitFile_Decoder_New(GB_Loader loader, GB_Stream stream)
 		decoder->gbDecoder.setparam = GreyBitFile_Decoder_SetParam;
 		decoder->gbDecoder.getcount = GreyBitFile_Decoder_GetCount;
 		decoder->gbDecoder.getwidth = GreyBitFile_Decoder_GetWidth;
+		decoder->gbDecoder.getheight = GreyBitFile_Decoder_GetHeight;
 		decoder->gbDecoder.getadvance = GreyBitFile_Decoder_GetAdvance;
 		decoder->gbDecoder.decode = GreyBitFile_Decoder_Decode;
 		decoder->gbDecoder.done = GreyBitFile_Decoder_Done;

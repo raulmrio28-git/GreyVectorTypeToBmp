@@ -15,7 +15,13 @@ GB_INT32	GreyBit_Decoder_GetWidth(GB_Decoder decoder, GB_UINT32 nCode, GB_INT16 
   return decoder->getwidth(decoder, nCode, nSize);
 }
 
-GB_INT32	GreyBit_Decoder_GetAdvance(GB_Decoder decoder, GB_UINT32 nCode, GB_INT16 nSize)
+GB_INT32	GreyBit_Decoder_GetHeight(GB_Decoder decoder)
+{
+	return decoder->getheight(decoder);
+}
+
+
+GB_INT16	GreyBit_Decoder_GetAdvance(GB_Decoder decoder, GB_UINT32 nCode, GB_INT16 nSize)
 {
 	return decoder->getadvance(decoder, nCode, nSize);
 }
