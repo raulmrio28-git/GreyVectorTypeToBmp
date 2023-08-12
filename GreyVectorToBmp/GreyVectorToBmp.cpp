@@ -552,12 +552,15 @@ static int OEMFont_DrawText(IFont *pMe, BMP *pDst, int x, int y, const wchar_t *
 
 int main(int argc, char* argv[])
 {
-	wchar_t text[] = L"Testing";
+	wchar_t text[] = L"Place your text here...";
 	BMP mybitmap;
 	mybitmap.width = 128;
 	mybitmap.height = 160;
 	mybitmap.rawp = (unsigned char*)malloc(mybitmap.width * mybitmap.height * sizeof(RGBA));
-	if (!argv[1]) return 1;
+	if (!argv[1]) {
+		printf("Arguments: %s <gbf/gcf file>\n", argv[0]);
+		return 1;
+	}
 	GreyBitFont_Init(argv[1]);
 	OEMFont_Create(&gFontNormal);
 	OEMFont_DrawText(&gFontNormal, &mybitmap, 0, 0, text, wcslen(text), { 255, 255, 255, 255 }, { 0, 0, 0, 0}, 0, 0);
