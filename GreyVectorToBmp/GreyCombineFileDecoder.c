@@ -103,7 +103,7 @@ void GreyCombineFile_Decoder_Done(GB_Decoder decoder)
 GB_Decoder GreyCombineFile_Decoder_New(GB_Loader loader, GB_Stream stream)
 {
 	GCF_Decoder decoder;
-	GB_INT32 i;
+	GB_INT32 i = 0;
 
 	decoder = (GCF_Decoder)GreyBit_Malloc(loader->gbMem, sizeof(GCF_DecoderRec));
 	if (decoder)
@@ -124,10 +124,10 @@ GB_Decoder GreyCombineFile_Decoder_New(GB_Loader loader, GB_Stream stream)
 		{
 			for (i = 0; i < GCF_ITEM_MAX; i++)
 			{
-				if (decoder->gbFileHeader.gbfInfo->gbiDataOff)
+				if (decoder->gbFileHeader.gbfInfo[i].gbiDataSize)
 				{
-					GreyBit_Stream_Offset(decoder->gbStream, decoder->gbFileHeader.gbfInfo->gbiDataOff, 0);
-					decoder->gbLoader[i] = (GB_Loader)GreyBitType_Loader_New_Stream(decoder->gbLibrary, decoder->gbStream, decoder->gbFileHeader.gbfInfo->gbiDataSize);
+					GreyBit_Stream_Offset(decoder->gbStream, decoder->gbFileHeader.gbfInfo[i].gbiDataOff, 0);
+					decoder->gbLoader[i] = (GB_Loader)GreyBitType_Loader_New_Stream(decoder->gbLibrary, decoder->gbStream, decoder->gbFileHeader.gbfInfo[i].gbiDataSize);
 				}
 			}
 		}

@@ -27,7 +27,6 @@ typedef struct  _GVF_OutlineRec
 typedef struct tagGREYVECTORFILEHEADER
 {
 	GB_CHAR gbfTag[4];
-	GB_UINT32 gbfSize;
 } GREYVECTORFILEHEADER;
 #pragma pack()
 

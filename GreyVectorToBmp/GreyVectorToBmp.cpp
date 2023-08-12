@@ -246,7 +246,7 @@ static void DrawChar(IFont *pMe, unsigned char *pBmp, int nPitch, const wchar_t 
 					foreR = ((diffR * (*sp)) / 256) + backR;
 					foreG = ((diffG * (*sp)) / 256) + backG;
 					foreB = ((diffB * (*sp)) / 256) + backB;
-					*dp = { foreR, foreG, foreB, *sp };
+					*dp = { *sp, *sp, *sp, *sp };
 					break;
 				}
 				dp++;
@@ -552,7 +552,7 @@ static int OEMFont_DrawText(IFont *pMe, BMP *pDst, int x, int y, const wchar_t *
 
 int main(int argc, char* argv[])
 {
-	wchar_t text[] = L"Browser";
+	wchar_t text[] = L"Testing";
 	BMP mybitmap;
 	mybitmap.width = 128;
 	mybitmap.height = 160;

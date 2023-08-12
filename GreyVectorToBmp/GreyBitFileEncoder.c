@@ -342,7 +342,6 @@ GB_INT32 GreyBitFile_Encoder_BuildAll(GBF_Encoder me)
 	me->gbFileHeader.gbfTag[1] = 'b';
 	me->gbFileHeader.gbfTag[2] = 't';
 	me->gbFileHeader.gbfTag[3] = 'f';
-	me->gbFileHeader.gbfSize = nGreyBitSize + nOffSetTableSize + nWidthTableSize + nHoriOffTableSize + sizeof(GREYBITFILEHEADER) + sizeof(GREYBITINFOHEADER);
 	return 0;
 }
 

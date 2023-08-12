@@ -9,7 +9,6 @@
 typedef struct tagGREYBITFILEHEADER
 {
 	GB_CHAR gbfTag[4];
-	GB_UINT32 gbfSize;
 } GREYBITFILEHEADER;
 #pragma pack()
 

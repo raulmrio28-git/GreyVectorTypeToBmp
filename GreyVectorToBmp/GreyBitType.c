@@ -207,25 +207,19 @@ void GreyBitType_Outline_Done(GBHANDLE library, GB_Outline outline)
 
 GB_Decoder GreyBit_Format_DecoderNew(GB_Format format, GB_Loader loader, GB_Stream stream)
 {
-	GB_Decoder result; 
-
 	if (format->decodernew)
-		result = format->decodernew(loader, stream);
+		return format->decodernew(loader, stream);
 	else
-		result = 0;
-	return result;
+		return 0;
 }
 
 #ifdef ENABLE_ENCODER
 GB_Encoder GreyBit_Format_EncoderNew(GB_Format format, GB_Creator creator, GB_Stream stream)
 {
-	GB_Encoder result;
-
 	if (format->encodernew)
-		result = format->encodernew(creator, stream);
+		return format->encodernew(creator, stream);
 	else
-		result = 0;
-	return result;
+		return 0;
 }
 #endif // ENABLE_ENCODER
 

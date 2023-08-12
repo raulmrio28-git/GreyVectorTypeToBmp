@@ -16,7 +16,7 @@ GB_Decoder GreyBitType_Loader_Probe(GB_Library library, GB_Loader loader)
 	while (format)
 	{
 		if (GreyBit_Format_Probe(format, loader->gbStream))
-			return GreyBit_Format_DecoderNew(format, loader, loader->gbStream);
+			decoder = GreyBit_Format_DecoderNew(format, loader, loader->gbStream);
 		format = format->next;
 	}
 	return decoder;

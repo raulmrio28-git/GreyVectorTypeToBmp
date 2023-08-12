@@ -208,7 +208,7 @@ GB_INT32 GreyBit_Stream_Write(GB_Stream stream, GB_BYTE *p, GB_INT32 size)
 GB_INT32 GreyBit_Stream_Seek(GB_Stream stream, GB_INT32 pos)
 {
 	if (stream->seek)
-		return stream->seek(stream->handler, pos);
+		return stream->seek(stream->handler, stream->offset + pos);
 	else
 		return 0;
 }
@@ -235,9 +235,18 @@ GB_INT32     GreyBit_Stream_Offset(GB_Stream stream, GB_INT32 offset, GB_INT32 s
 
 void GreyBit_Stream_Done(GB_Stream stream)
 {
-	if (stream->close)
-		stream->close(stream->handler);
-	if (stream->pfilename)
-		GreyBit_Free_Sys(stream->pfilename);
-	GreyBit_Free_Sys(stream);
+	stream->refcnt--;
+	if (stream->refcnt <= 0)
+	{
+		if (stream->parent)
+			GreyBit_Stream_Done(stream->parent);
+		else
+		{
+			if (stream->close)
+				stream->close(stream->handler);
+			if (stream->pfilename)
+				GreyBit_Free_Sys(stream->pfilename);
+		}
+		GreyBit_Free_Sys(stream);
+	}
 }

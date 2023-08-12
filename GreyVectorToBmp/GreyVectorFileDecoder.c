@@ -91,9 +91,7 @@ GB_INT32 GreyVectorFile_Decoder_InfoInit(GVF_Decoder me, GB_INT16 nMaxWidth, GB_
 GB_INT32 GreyVectorFile_Decoder_ReadHeader(GVF_Decoder me)
 {
 	GreyBit_Stream_Seek(me->gbStream, 0);
-	if (GreyBit_Stream_Read(me->gbStream, (GB_BYTE*)&me->gbFileHeader, 8) != 8)
-		return -1;
-	if (me->gbFileHeader.gbfSize != me->gbStream->size)
+	if (GreyBit_Stream_Read(me->gbStream, (GB_BYTE*)&me->gbFileHeader, sizeof(GREYVECTORFILEHEADER)) != sizeof(GREYVECTORFILEHEADER))
 		return -1;
 	GreyBit_Stream_Read(me->gbStream, (GB_BYTE*)&me->gbInfoHeader, sizeof(GREYVECTORINFOHEADER));
 	me->nItemCount = me->gbInfoHeader.gbiCount;
@@ -108,6 +106,7 @@ GB_INT32 GreyVectorFile_Decoder_Init(GVF_Decoder me)
 	int nDataSizeb;
 	int nRet;
 
+	GreyBit_Stream_Seek(me->gbStream, 0);
 	nRet = GreyVectorFile_Decoder_ReadHeader(me);
 	if (nRet < 0)
 		return nRet;

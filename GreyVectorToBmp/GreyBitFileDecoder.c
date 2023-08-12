@@ -94,9 +94,7 @@ GB_INT32 GreyBitFile_Decoder_InfoInit(GBF_Decoder me, GB_INT16 nMaxWidth, GB_INT
 GB_INT32 GreyBitFile_Decoder_ReadHeader(GBF_Decoder me)
 {
 	GreyBit_Stream_Seek(me->gbStream, 0);
-	if (GreyBit_Stream_Read(me->gbStream, (GB_BYTE*)&me->gbFileHeader, 8) != 8)
-		return -1;
-	if (me->gbFileHeader.gbfSize != me->gbStream->size)
+	if (GreyBit_Stream_Read(me->gbStream, (GB_BYTE*)&me->gbFileHeader, sizeof(GREYBITFILEHEADER)) != sizeof(GREYBITFILEHEADER))
 		return -1;
 	GreyBit_Stream_Read(me->gbStream, (GB_BYTE*)&me->gbInfoHeader, sizeof(GREYBITINFOHEADER));
 	me->nItemCount = me->gbInfoHeader.gbiCount;

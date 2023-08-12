@@ -235,7 +235,6 @@ GB_INT32 GreyVectorFile_Encoder_BuildAll(GVF_Encoder me)
 	me->gbFileHeader.gbfTag[1] = 'v';
 	me->gbFileHeader.gbfTag[2] = 't';
 	me->gbFileHeader.gbfTag[3] = 'f';
-	me->gbFileHeader.gbfSize = nGreyBitSize + nOffSetTableSize + nWidthTableSize + sizeof(GREYVECTORFILEHEADER) + sizeof(GREYVECTORINFOHEADER);
 	return 0;
 }
 
