@@ -108,7 +108,7 @@ GB_IOHandler GreyBit_Open_Sys(const GB_CHAR *p, GB_BOOL bcreate)
 
 	if (bcreate)
 	{
-		handle->fp = fopen(p, "wb+");
+		handle->fp = fopen(p, "wb");
 	}
 	else
 	{
