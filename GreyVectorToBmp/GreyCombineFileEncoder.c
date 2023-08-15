@@ -23,22 +23,27 @@ GB_INT32 GreyCombineFile_Encoder_SetParam(GB_Encoder encoder, void *pParam)
 
 GB_INT32 GreyCombineFile_Encoder_Delete(GB_Encoder encoder, GB_UINT32 nCode)
 {
+	GCF_Encoder me = (GCF_Encoder)encoder;
+	nCurrItemCount--;
+	me->gbFileHeader.gbfInfo[nCurrItemCount].gbiHeight = 0;
+	me->gbFileHeader.gbfInfo[nCurrItemCount].gbiDataSize = 0;
+	me->gbFileHeader.gbfInfo[nCurrItemCount].gbiDataOff = 0;
+	me->gbCreator[nCurrItemCount] = 0;
 	return 0;
 }
 
 GB_INT32 GreyCombineFile_Encoder_Encode(GB_Encoder encoder, GB_UINT32 nCode, GB_Data pData)
 {
-	GB_Stream stream;
 	GCF_Encoder me = (GCF_Encoder)encoder;
 	if (!pData || pData->format != GB_FORMAT_STREAM)
 		return -1;
-	me->gbCreator[nCurrItemCount] = pData->data;
+	me->gbCreator[nCurrItemCount] = (GB_Stream)pData->data;
 	if (!me->gbCreator[nCurrItemCount]->size)
 		return -1;
 	if (nCurrItemCount >= GCF_ITEM_MAX)
 		return -1;
 	me->gbFileHeader.gbfInfo[nCurrItemCount].gbiDataSize = me->gbCreator[nCurrItemCount]->size;
-	me->gbFileHeader.gbfInfo[nCurrItemCount].gbiDataSize = nOffset;
+	me->gbFileHeader.gbfInfo[nCurrItemCount].gbiDataOff = nOffset;
 	nOffset += me->gbFileHeader.gbfInfo[nCurrItemCount].gbiDataSize;
 	nCurrItemCount++;
 	return 0;
