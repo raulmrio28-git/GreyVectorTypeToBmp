@@ -44,7 +44,7 @@ typedef struct _GCF_EncoderRec
 	GB_Memory gbMem;
 	GB_Stream gbStream;
 	GREYCOMBINEFILEHEADER gbFileHeader;
-	GB_Creator gbCreator[GCF_ITEM_MAX];
+	GB_Stream gbCreator[GCF_ITEM_MAX];
 } GCF_EncoderRec, *GCF_Encoder;
 #endif //ENABLE_ENCODER
 
