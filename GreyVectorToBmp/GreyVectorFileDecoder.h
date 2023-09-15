@@ -10,7 +10,7 @@ extern "C" {
 
 #ifdef ENABLE_GREYVECTORFILE
 extern GB_Decoder GreyVectorFile_Decoder_New(GB_Loader loader, GB_Stream stream);
-extern GB_INT32 GreyVectorFile_Decoder_SetParam(GB_Decoder decoder, void *pParam);
+extern GB_INT32 GreyVectorFile_Decoder_SetParam(GB_Decoder decoder, GB_Param nParam, GB_UINT32 dwParam);
 extern GB_INT32 GreyVectorFile_Decoder_GetCount(GB_Decoder decoder);
 extern GB_INT32 GreyVectorFile_Decoder_GetWidth(GB_Decoder decoder, GB_UINT32 nCode, GB_INT16 nSize);
 extern GB_INT32 GreyVectorFile_Decoder_GetHeight(GB_Decoder decoder);

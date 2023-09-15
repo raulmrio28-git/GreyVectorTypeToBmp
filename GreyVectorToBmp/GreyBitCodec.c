@@ -1,8 +1,8 @@
 #include "GreyBitCodec.h"
 
-GB_INT32	GreyBit_Decoder_SetParam(GB_Decoder decoder, void *pParam)
+GB_INT32	GreyBit_Decoder_SetParam(GB_Decoder decoder, GB_Param nParam, GB_UINT32 dwParam)
 {
-  return decoder->setparam(decoder, pParam);
+  return decoder->setparam(decoder, nParam, dwParam);
 }
 
 GB_INT32	GreyBit_Decoder_GetCount(GB_Decoder decoder)
@@ -42,9 +42,9 @@ GB_INT32	GreyBit_Encoder_GetCount(GB_Encoder encoder)
 	return encoder->getcount(encoder);
 }
 
-GB_INT32	GreyBit_Encoder_SetParam(GB_Encoder encoder, void *pParam)
+GB_INT32	GreyBit_Encoder_SetParam(GB_Encoder encoder, GB_Param nParam, GB_UINT32 dwParam)
 {
-	return encoder->setparam(encoder, pParam);
+	return encoder->setparam(encoder, nParam, dwParam);
 }
 
 GB_INT32	GreyBit_Encoder_Delete(GB_Encoder encoder, GB_UINT32 nCode)

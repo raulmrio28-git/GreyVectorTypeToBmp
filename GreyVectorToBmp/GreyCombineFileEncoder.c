@@ -16,7 +16,7 @@ GB_INT32 GreyCombineFile_Encoder_GetCount(GB_Encoder encoder)
 	return nCurrItemCount;
 }
 
-GB_INT32 GreyCombineFile_Encoder_SetParam(GB_Encoder encoder, void *pParam)
+GB_INT32 GreyCombineFile_Encoder_SetParam(GB_Encoder encoder, GB_Param nParam, GB_UINT32 dwParam)
 {
 	return 0;
 }

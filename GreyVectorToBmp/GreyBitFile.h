@@ -63,7 +63,9 @@ typedef struct GBF_EncoderRec
 	GB_Library gbLibrary;
 	GB_Memory gbMem;
 	GB_Stream gbStream;
-	GB_GbfParam gbParam;
+	GB_UINT32 nHeight;
+	GB_UINT32 nBitCount;
+	GB_BOOL bCompress;
 	GB_BOOL gbInited;
 	GB_INT32 nCacheItem;
 	GB_INT32 nItemCount;

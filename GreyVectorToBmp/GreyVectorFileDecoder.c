@@ -125,16 +125,19 @@ GB_INT32 GreyVectorFile_Decoder_Init(GVF_Decoder me)
 	return 0;
 }
 
-GB_INT32 GreyVectorFile_Decoder_SetParam(GB_Decoder decoder, void *pParam)
+GB_INT32 GreyVectorFile_Decoder_SetParam(GB_Decoder decoder, GB_Param nParam, GB_UINT32 dwParam)
 {
 	GVF_Decoder me = (GVF_Decoder)decoder;
-	if (pParam)
+	if (nParam == GB_PARAM_CACHEITEM)
 	{
-		if (me->gpGreyBits)
-			return -1;
-		me->nCacheItem = *(GB_INT32*)pParam;
-		me->gpGreyBits = (GB_Outline*)GreyBit_Malloc(me->gbMem, 4 * me->nCacheItem);
-		me->nGreyBitsCount = 0;
+		if (nParam)
+		{
+			if (me->gpGreyBits)
+				return -1;
+			me->nCacheItem = dwParam;
+			me->gpGreyBits = (GB_Outline*)GreyBit_Malloc(me->gbMem, 4 * me->nCacheItem);
+			me->nGreyBitsCount = 0;
+		}
 	}
 	return 0;
 }

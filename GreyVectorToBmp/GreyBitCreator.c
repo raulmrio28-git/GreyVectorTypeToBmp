@@ -70,10 +70,10 @@ GBHANDLE GreyBitType_Creator_New_Memory(GBHANDLE library, void *pBuf, GB_INT32 n
 	return 0;
 }
 
-int		GreyBitType_Creator_SetParam(GBHANDLE creator, void *pParam)
+int		GreyBitType_Creator_SetParam(GBHANDLE creator, GB_Param nParam, GB_UINT32 dwParam)
 {
 	GB_Creator me = (GB_Creator)creator;
-	return GreyBit_Encoder_SetParam(me->gbEncoder, pParam);
+	return GreyBit_Encoder_SetParam(me->gbEncoder, nParam, dwParam);
 }
 
 int		GreyBitType_Creator_DelChar(GBHANDLE creator, GB_UINT32 nCode)

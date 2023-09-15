@@ -88,52 +88,6 @@ typedef struct  _GB_OutlineRec
     GB_INT16       *contours;        /* the contour end points             */
 } GB_OutlineRec, *GB_Outline;
 
-#ifdef ENABLE_GREYBITFILE
-// .gbf parameter
-typedef union _GB_GbfParamRec
-{
-    struct {
-        GB_INT32        nCacheItem;
-    }decoder;
-#ifdef ENABLE_ENCODER
-    struct {
-        GB_INT16        nHeight;
-        GB_INT16        nBitCount;
-        GB_BOOL         bCompress; //  Ƿ ѹ      
-    }encoder;
-#endif
-} GB_GbfParamRec, *GB_GbfParam;
-#endif
-
-#ifdef ENABLE_TRUETYPEFILE
-// .ttf parameter
-typedef union _GB_TtfParamRec
-{
-    struct {
-        GB_INT32       unused;
-    }decoder;
-#ifdef ENABLE_ENCODER
-    struct {
-        GB_INT32       unused;
-    }encoder;
-#endif
-} GB_TtfParamRec, *GB_TtfParam;
-#endif
-
-#ifdef ENABLE_GREYVECTORFILE
-// .gvf parameter
-typedef union _GB_GvfParamRec
-{
-    struct{
-        GB_INT32        nCacheItem;
-    }decoder;
-#ifdef ENABLE_ENCODER
-    struct{
-        GB_INT16        nHeight;
-    }encoder;
-#endif
-} GB_GvfParamRec, *GB_GvfParam;
-#endif
 /*************************************************************************/
 /*                                                                       */
 /*                                  API                                  */
@@ -159,7 +113,8 @@ extern void         GreyBitType_Outline_Done(GBHANDLE library, GB_Outline outlin
 #ifdef ENABLE_ENCODER
 // Creator
 extern GBHANDLE     GreyBitType_Creator_New(GBHANDLE library, const GB_CHAR* filepathname);
-extern int          GreyBitType_Creator_SetParam(GBHANDLE creator, void *pParam);
+//extern int          GreyBitType_Creator_SetParam(GBHANDLE creator, void *pParam);
+extern int          GreyBitType_Creator_SetParam(GBHANDLE creator, GB_Param nParam, GB_UINT32 dwParam);
 extern int          GreyBitType_Creator_DelChar(GBHANDLE creator, GB_UINT32 nCode);
 extern int          GreyBitType_Creator_SaveChar(GBHANDLE creator, GB_UINT32 nCode, GB_Data pData);
 extern int          GreyBitType_Creator_Flush(GBHANDLE creator);
@@ -172,7 +127,8 @@ extern GBHANDLE     GreyBitType_Loader_New_Stream(GBHANDLE library, GBHANDLE str
 extern GBHANDLE     GreyBitType_Loader_New_Memory(GBHANDLE library, void *pBuf, GB_INT32 nBufSize);
 extern GB_INT32     GreyBitType_Loader_GetCount(GBHANDLE loader);
 extern GB_INT32     GreyBitType_Loader_GetHeight(GBHANDLE loader);
-extern int          GreyBitType_Loader_SetParam(GBHANDLE loader, void* pParam);
+extern int          GreyBitType_Loader_SetParam(GBHANDLE loader,  GB_Param nParam, GB_UINT32 dwParam);
+//extern int          GreyBitType_Loader_SetParam(GBHANDLE loader, void* pParam);
 extern GB_BOOL      GreyBitType_Loader_IsExist(GBHANDLE loader, GB_UINT32 nCode);
 extern void         GreyBitType_Loader_Done(GBHANDLE loader);
 

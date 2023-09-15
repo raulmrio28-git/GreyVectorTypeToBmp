@@ -12,7 +12,7 @@ extern "C" {
 #ifdef ENABLE_ENCODER
 extern GB_Encoder GreyCombineFile_Encoder_New(GB_Creator creator, GB_Stream stream);
 extern GB_BOOL GreyCombineFile_Encoder_New_Creator(GB_Encoder encoder, GB_Library library);
-extern GB_INT32 GreyCombineFile_Encoder_SetParam(GB_Encoder encoder, void *pParam);
+extern GB_INT32 GreyCombineFile_Encoder_SetParam(GB_Encoder encoder, GB_Param nParam, GB_UINT32 dwParam);
 extern GB_INT32 GreyCombineFile_Encoder_GetCount(GB_Encoder encoder);
 extern GB_INT32 GreyCombineFile_Encoder_Encode(GB_Encoder encoder, GB_UINT32 nCode, GB_Data pData);
 extern void GreyCombineFile_Encoder_Done(GB_Encoder encoder);

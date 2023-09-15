@@ -80,7 +80,7 @@ typedef struct _GVF_EncoderRec
 	GB_Library gbLibrary;
 	GB_Memory gbMem;
 	GB_Stream gbStream;
-	GB_GvfParam gbParam;
+	GB_UINT32 nHeight;
 	GB_BOOL gbInited;
 	GB_INT32 nCacheItem;
 	GB_INT32 nItemCount;

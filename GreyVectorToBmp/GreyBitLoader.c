@@ -83,10 +83,10 @@ GBHANDLE GreyBitType_Loader_New_Memory(GBHANDLE library, void *pBuf, GB_INT32 nB
 	return 0;
 }
 
-int GreyBitType_Loader_SetParam(GBHANDLE loader, void *pParam)
+int GreyBitType_Loader_SetParam(GBHANDLE loader, GB_Param nParam, GB_UINT32 dwParam)
 {
 	GB_Loader me = (GB_Loader)loader;
-	return GreyBit_Decoder_SetParam(me->gbDecoder, pParam);
+	return GreyBit_Decoder_SetParam(me->gbDecoder, nParam, dwParam);
 }
 
 GB_INT32 GreyBitType_Loader_GetCount(GBHANDLE loader)

@@ -127,17 +127,20 @@ GB_INT32 GreyBitFile_Decoder_Init(GBF_Decoder me)
 	return 0;
 }
 
-GB_INT32 GreyBitFile_Decoder_SetParam(GB_Decoder decoder, void *pParam)
+GB_INT32 GreyBitFile_Decoder_SetParam(GB_Decoder decoder, GB_Param nParam, GB_UINT32 dwParam)
 {
 	GBF_Decoder me = (GBF_Decoder)decoder;
-	if (pParam)
+	if (nParam == GB_PARAM_CACHEITEM)
 	{
-		if (me->gpGreyBits)
-			return -1;
-		me->nCacheItem = *(GB_INT32*)pParam;
-		me->gpGreyBits = (GB_BYTE **)GreyBit_Malloc(me->gbMem, 4 * me->nCacheItem);
-		me->pnGreySize = (GB_UINT16*)GreyBit_Malloc(me->gbMem, 2 * me->nCacheItem);
-		me->nGreyBitsCount = 0;
+		if (dwParam)
+		{
+			if (me->gpGreyBits)
+				return -1;
+			me->nCacheItem = dwParam;
+			me->gpGreyBits = (GB_BYTE **)GreyBit_Malloc(me->gbMem, 4 * me->nCacheItem);
+			me->pnGreySize = (GB_UINT16*)GreyBit_Malloc(me->gbMem, 2 * me->nCacheItem);
+			me->nGreyBitsCount = 0;
+		}
 	}
 	return 0;
 }

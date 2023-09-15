@@ -58,7 +58,7 @@ typedef struct _GB_CreatorRec
 typedef GB_Decoder(*GB_DECODER_NEW)(GB_Loader loader, GB_Stream stream);
 typedef GB_BOOL(*GB_PROBE)(GB_Stream stream);
 typedef GB_INT32(*GB_DECODER_SETCACHE)(GB_Decoder decoder, GB_INT32 nCacheItem);
-typedef GB_INT32(*GB_DECODER_SETPARAM)(GB_Decoder decoder, void *pParam);
+typedef GB_INT32(*GB_DECODER_SETPARAM)(GB_Decoder decoder, GB_Param nParam, GB_UINT32 dwParam);
 typedef GB_INT32(*GB_DECODER_GETCOUNT)(GB_Decoder decoder);
 typedef GB_INT32(*GB_DECODER_GETHEIGHT)(GB_Decoder decoder);
 typedef GB_INT32(*GB_DECODER_GETWIDTH)(GB_Decoder decoder, GB_UINT32 nCode, GB_INT16 nSize);
@@ -69,7 +69,7 @@ typedef void(*GB_DECODER_DONE)(GB_Decoder decoder);
 #ifdef ENABLE_ENCODER
 typedef GB_Encoder(*GB_ENCODER_NEW)(GB_Creator creator, GB_Stream stream);
 typedef GB_INT32(*GB_ENCODER_GETCOUNT)(GB_Encoder encoder);
-typedef GB_INT32(*GB_ENCODER_SETPARAM)(GB_Encoder encoder, void *pParam);
+typedef GB_INT32(*GB_ENCODER_SETPARAM)(GB_Encoder encoder, GB_Param nParam, GB_UINT32 dwParam);
 typedef GB_INT32(*GB_ENCODER_DELETE)(GB_Encoder encoder, GB_UINT32 nCode);
 typedef GB_INT32(*GB_ENCODER_ENCODE)(GB_Encoder encoder, GB_UINT32 nCode, GB_Data pData);
 typedef GB_INT32(*GB_ENCODER_FLUSH)(GB_Encoder encoder);

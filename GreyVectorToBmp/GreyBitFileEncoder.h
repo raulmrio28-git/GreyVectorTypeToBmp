@@ -11,7 +11,7 @@ extern "C" {
 #ifdef ENABLE_GREYBITFILE
 #ifdef ENABLE_ENCODER
 extern GB_Encoder GreyBitFile_Encoder_New(GB_Creator creator, GB_Stream stream);
-extern GB_INT32 GreyBitFile_Encoder_SetParam(GB_Encoder encoder, void *pParam);
+extern GB_INT32 GreyBitFile_Encoder_SetParam(GB_Encoder encoder, GB_Param nParam, GB_UINT32 dwParam);
 extern GB_INT32 GreyBitFile_Encoder_GetCount(GB_Encoder encoder);
 extern GB_INT32 GreyBitFile_Encoder_Encode(GB_Encoder encoder, GB_UINT32 nCode, GB_Data pData);
 extern void GreyBitFile_Encoder_Done(GB_Encoder encoder);

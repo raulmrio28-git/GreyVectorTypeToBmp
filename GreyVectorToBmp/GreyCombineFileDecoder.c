@@ -2,7 +2,7 @@
 #include "GreyBitSystem.h"
 #include "GreyCombineFileDecoder.h"
 
-GB_INT32 GreyCombineFile_Decoder_SetParam(GB_Decoder decoder, void* dwParam)
+GB_INT32 GreyCombineFile_Decoder_SetParam(GB_Decoder decoder, GB_Param nParam, GB_UINT32 dwParam)
 {
 	GB_INT32 nCurrItem;
 	GB_INT32 nCurrCount = 0;
@@ -12,7 +12,7 @@ GB_INT32 GreyCombineFile_Decoder_SetParam(GB_Decoder decoder, void* dwParam)
 	for (nCurrItem = 0; nCurrItem < GCF_ITEM_MAX; ++nCurrItem)
 	{
 		gbCurrLoader = me->gbLoader[nCurrItem];
-		if (gbCurrLoader && GreyBit_Decoder_SetParam(gbCurrLoader->gbDecoder, dwParam) == 0)
+		if (gbCurrLoader && GreyBit_Decoder_SetParam(gbCurrLoader->gbDecoder, nParam, dwParam) == 0)
 			return 0;
 	}
 	return -1;
