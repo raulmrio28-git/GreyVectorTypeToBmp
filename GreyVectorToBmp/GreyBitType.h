@@ -4,11 +4,13 @@
 extern "C"{
 #endif
 
+#ifdef WIN32
+//#define ENABLE_TRUETYPEFILE
+#define ENABLE_ENCODER
+#endif
 #define ENABLE_GREYCOMBINEFILE
 #define ENABLE_GREYBITFILE
-//#define ENABLE_TRUETYPEFILE
 #define ENABLE_GREYVECTORFILE
-#define ENABLE_ENCODER
 #define ENABLE_ITALIC
 #define ENABLE_BOLD
 

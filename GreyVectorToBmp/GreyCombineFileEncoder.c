@@ -18,7 +18,7 @@ GB_INT32 GreyCombineFile_Encoder_GetCount(GB_Encoder encoder)
 
 GB_INT32 GreyCombineFile_Encoder_SetParam(GB_Encoder encoder, GB_Param nParam, GB_UINT32 dwParam)
 {
-	return 0;
+	return GB_SUCCESS;
 }
 
 GB_INT32 GreyCombineFile_Encoder_Delete(GB_Encoder encoder, GB_UINT32 nCode)
@@ -29,24 +29,24 @@ GB_INT32 GreyCombineFile_Encoder_Delete(GB_Encoder encoder, GB_UINT32 nCode)
 	me->gbFileHeader.gbfInfo[nCurrItemCount].gbiDataSize = 0;
 	me->gbFileHeader.gbfInfo[nCurrItemCount].gbiDataOff = 0;
 	me->gbCreator[nCurrItemCount] = 0;
-	return 0;
+	return GB_SUCCESS;
 }
 
 GB_INT32 GreyCombineFile_Encoder_Encode(GB_Encoder encoder, GB_UINT32 nCode, GB_Data pData)
 {
 	GCF_Encoder me = (GCF_Encoder)encoder;
 	if (!pData || pData->format != GB_FORMAT_STREAM)
-		return -1;
+		return GB_FAILED;
 	me->gbCreator[nCurrItemCount] = (GB_Stream)pData->data;
 	if (!me->gbCreator[nCurrItemCount]->size)
-		return -1;
+		return GB_FAILED;
 	if (nCurrItemCount >= GCF_ITEM_MAX)
-		return -1;
+		return GB_FAILED;
 	me->gbFileHeader.gbfInfo[nCurrItemCount].gbiDataSize = me->gbCreator[nCurrItemCount]->size;
 	me->gbFileHeader.gbfInfo[nCurrItemCount].gbiDataOff = nOffset;
 	nOffset += me->gbFileHeader.gbfInfo[nCurrItemCount].gbiDataSize;
 	nCurrItemCount++;
-	return 0;
+	return GB_SUCCESS;
 }
 
 GB_INT32 GreyCombineFile_Encoder_WriteAll(GCF_Encoder me)
@@ -66,7 +66,7 @@ GB_INT32 GreyCombineFile_Encoder_WriteAll(GCF_Encoder me)
 			GreyBit_Free(me->gbMem, pTmp);
 		}
 	}
-	return 0;
+	return GB_SUCCESS;
 }
 
 GB_INT32 GreyCombineFile_Encoder_BuildAll(GCF_Encoder me)
@@ -78,7 +78,7 @@ GB_INT32 GreyCombineFile_Encoder_BuildAll(GCF_Encoder me)
 	me->gbFileHeader.gbfTag[1] = 'c';
 	me->gbFileHeader.gbfTag[2] = 't';
 	me->gbFileHeader.gbfTag[3] = 'f';
-	return 0;
+	return GB_SUCCESS;
 }
 
 GB_INT32 GreyCombineFile_Encoder_Flush(GB_Encoder encoder)
@@ -88,7 +88,7 @@ GB_INT32 GreyCombineFile_Encoder_Flush(GB_Encoder encoder)
 
 	GreyCombineFile_Encoder_BuildAll(me);
 	GreyCombineFile_Encoder_WriteAll(me);
-	return 0;
+	return GB_SUCCESS;
 }
 
 void GreyCombineFile_Encoder_Done(GB_Encoder encoder)

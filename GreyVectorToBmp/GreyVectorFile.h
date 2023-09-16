@@ -1,3 +1,4 @@
+#pragma once
 #ifndef GREYVECTORFILE_H_
 #define GREYVECTORFILE_H_
 #include "GreyBitType.h"
@@ -30,11 +31,6 @@ typedef struct tagGREYVECTORFILEHEADER
 } GREYVECTORFILEHEADER;
 #pragma pack()
 
-typedef struct tagV_SECTIONOINFO
-{
-	GB_UINT16 gbSectionOff[146];
-} V_SECTIONOINFO;
-
 #pragma pack(1)
 typedef struct tagGREYVECTORINFOHEADER
 {
@@ -48,8 +44,8 @@ typedef struct tagGREYVECTORINFOHEADER
 	GB_UINT32 gbiHoriOffTabOff;
 	GB_UINT32 gbiOffsetTabOff;
 	GB_UINT32 gbiOffGreyBits;
-	V_SECTIONOINFO gbiWidthSection;
-	V_SECTIONOINFO gbiIndexSection;
+	SECTIONOINFO gbiWidthSection;
+	SECTIONOINFO gbiIndexSection;
 } GREYVECTORINFOHEADER;
 #pragma pack()
 
@@ -74,13 +70,14 @@ typedef struct _GVF_DecoderRec
 	GB_INT32 nGreyBitsCount;
 } GVF_DecoderRec, *GVF_Decoder;
 
+#ifdef ENABLE_ENCODER
 typedef struct _GVF_EncoderRec
 {
 	GB_EncoderRec gbEncoder;
 	GB_Library gbLibrary;
 	GB_Memory gbMem;
 	GB_Stream gbStream;
-	GB_UINT32 nHeight;
+	GB_UINT16 nHeight;
 	GB_BOOL gbInited;
 	GB_INT32 nCacheItem;
 	GB_INT32 nItemCount;
@@ -93,6 +90,7 @@ typedef struct _GVF_EncoderRec
 	GB_Outline *gpGreyBits;
 	GB_UINT16 *pnGreySize;
 } GVF_EncoderRec, *GVF_Encoder;
+#endif
 
 #define TAG_MASK 0x1
 #define MAX_COUNT 0x10000

@@ -39,13 +39,13 @@ GB_INT32 GreyBitFile_Decoder_CaheItem(GBF_Decoder me, GB_UINT32 nCode, GB_BYTE *
 	GB_INT32 UniIndex;
 
 	if (me->nGreyBitsCount >= me->nCacheItem || !me->gbOffsetTable)
-		return -1;
+		return GB_FAILED;
 	UniIndex = UnicodeSection_GetIndex((GB_UINT16)nCode);
-	if (UniIndex >= UNICODE_SECTION_NUM)
-		return -1;
 	SectionIndex = me->gbInfoHeader.gbiIndexSection.gbSectionOff[UniIndex];
+	if (UniIndex >= UNICODE_SECTION_NUM)
+		return GB_FAILED;
 	if (!SectionIndex)
-		return -1;
+		return GB_FAILED;
 	me->gpGreyBits[me->nGreyBitsCount] = (GB_BYTE*)GreyBit_Malloc(me->gbMem, nDataSize);
 	me->pnGreySize[me->nGreyBitsCount] = (GB_INT16)nDataSize;
 	GreyBit_Memcpy_Sys(me->gpGreyBits[me->nGreyBitsCount], pData, nDataSize);
@@ -53,7 +53,7 @@ GB_INT32 GreyBitFile_Decoder_CaheItem(GBF_Decoder me, GB_UINT32 nCode, GB_BYTE *
 	SectionIndex--;
 	SectionIndex += (GB_UINT16)nCode - nMinCode;
 	me->gbOffsetTable[SectionIndex] = SET_RAM(me->nGreyBitsCount++);
-	return 0;
+	return GB_SUCCESS;
 }
 
 void GreyBitFile_Decoder_ClearCache(GBF_Decoder me)
@@ -88,18 +88,18 @@ GB_INT32 GreyBitFile_Decoder_InfoInit(GBF_Decoder me, GB_INT16 nMaxWidth, GB_INT
 	me->gbBitmap = GreyBitType_Bitmap_New(me->gbLibrary, nMaxWidth, nHeight, nBitCount, 0);
 	me->nBuffSize = me->gbBitmap->pitch * me->gbBitmap->height;
 	me->pBuff = (GB_BYTE *)GreyBit_Malloc(me->gbMem, me->nBuffSize);
-	return 0;
+	return GB_SUCCESS;
 }
 
 GB_INT32 GreyBitFile_Decoder_ReadHeader(GBF_Decoder me)
 {
 	GreyBit_Stream_Seek(me->gbStream, 0);
 	if (GreyBit_Stream_Read(me->gbStream, (GB_BYTE*)&me->gbFileHeader, sizeof(GREYBITFILEHEADER)) != sizeof(GREYBITFILEHEADER))
-		return -1;
+		return GB_FAILED;
 	GreyBit_Stream_Read(me->gbStream, (GB_BYTE*)&me->gbInfoHeader, sizeof(GREYBITINFOHEADER));
 	me->nItemCount = me->gbInfoHeader.gbiCount;
 	GreyBitFile_Decoder_InfoInit(me, me->gbInfoHeader.gbiWidth, me->gbInfoHeader.gbiHeight, me->gbInfoHeader.gbiBitCount);
-	return 0;
+	return GB_SUCCESS;
 }
 
 GB_INT32 GreyBitFile_Decoder_Init(GBF_Decoder me)
@@ -124,7 +124,7 @@ GB_INT32 GreyBitFile_Decoder_Init(GBF_Decoder me)
 	me->gbOffsetTable = (GB_UINT32 *)GreyBit_Malloc(me->gbMem, nDataSizeb);
 	GreyBit_Stream_Seek(me->gbStream, me->gbInfoHeader.gbiOffsetTabOff + me->gbOffDataBits);
 	GreyBit_Stream_Read(me->gbStream, (GB_BYTE*)me->gbOffsetTable, nDataSizeb);
-	return 0;
+	return GB_SUCCESS;
 }
 
 GB_INT32 GreyBitFile_Decoder_SetParam(GB_Decoder decoder, GB_Param nParam, GB_UINT32 dwParam)
@@ -135,14 +135,14 @@ GB_INT32 GreyBitFile_Decoder_SetParam(GB_Decoder decoder, GB_Param nParam, GB_UI
 		if (dwParam)
 		{
 			if (me->gpGreyBits)
-				return -1;
+				return GB_FAILED;
 			me->nCacheItem = dwParam;
 			me->gpGreyBits = (GB_BYTE **)GreyBit_Malloc(me->gbMem, 4 * me->nCacheItem);
 			me->pnGreySize = (GB_UINT16*)GreyBit_Malloc(me->gbMem, 2 * me->nCacheItem);
 			me->nGreyBitsCount = 0;
 		}
 	}
-	return 0;
+	return GB_SUCCESS;
 }
 
 GB_INT32 GreyBitFile_Decoder_GetHeight(GB_Decoder decoder)
@@ -166,9 +166,9 @@ GB_INT32 GreyBitFile_Decoder_GetWidth(GB_Decoder decoder, GB_UINT32 nCode, GB_IN
 
 	me = (GBF_Decoder)decoder;
 	UniIndex = UnicodeSection_GetIndex((GB_UINT16)nCode);
+	WidthIdx = me->gbInfoHeader.gbiWidthSection.gbSectionOff[UniIndex];
 	if (UniIndex >= UNICODE_SECTION_NUM)
 		return 0;
-	WidthIdx = me->gbInfoHeader.gbiWidthSection.gbSectionOff[UniIndex];
 	if (!WidthIdx)
 		return 0;
 	WidthIdx--;
@@ -197,9 +197,9 @@ GB_INT16 GreyBitFile_Decoder_GetHoriOff(GB_Decoder decoder, GB_UINT32 nCode, GB_
 
 	me = (GBF_Decoder)decoder;
 	UniIndex = UnicodeSection_GetIndex((GB_UINT16)nCode);
+	HoriOffIdx = me->gbInfoHeader.gbiWidthSection.gbSectionOff[UniIndex];
 	if (UniIndex >= UNICODE_SECTION_NUM)
 		return 0;
-	HoriOffIdx = me->gbInfoHeader.gbiWidthSection.gbSectionOff[UniIndex];
 	if (!HoriOffIdx)
 		return 0;
 	HoriOffIdx--;
@@ -287,9 +287,9 @@ GB_INT32 GreyBitFile_Decoder_Decompress(GB_BYTE *pOutData, GB_INT32 *pnInOutLen,
 		}
 	}
 	if (nLen)
-		return -1;
+		return GB_FAILED;
 	*pnInOutLen = nDecompressLen;
-	return 0;
+	return GB_SUCCESS;
 }
 
 GB_INT32 GreyBitFile_Decoder_Decode(GB_Decoder decoder, GB_UINT32 nCode, GB_Data pData, GB_INT16 nSize)
@@ -306,7 +306,7 @@ GB_INT32 GreyBitFile_Decoder_Decode(GB_Decoder decoder, GB_UINT32 nCode, GB_Data
 	nWidth = (GB_INT16)GreyBitFile_Decoder_GetWidth(decoder, nCode, me->gbInfoHeader.gbiHeight);
 	nHoriOff = GreyBitFile_Decoder_GetHoriOff(decoder, nCode, nSize);
 	if (!nWidth)
-		return -1;
+		return GB_FAILED;
 	me->gbBitmap->width = nWidth;
 	me->gbBitmap->pitch = (GB_INT16)(me->gbBitmap->bitcount * 8 * nWidth + 63) >> 6;
 	me->gbBitmap->horioff = nHoriOff;
@@ -334,7 +334,7 @@ GB_INT32 GreyBitFile_Decoder_Decode(GB_Decoder decoder, GB_UINT32 nCode, GB_Data
 		nInDataLen = me->pnGreySize[Offset];
 	}
 	if (!pByteData)
-		return -1;
+		return GB_SUCCESS;
 	if (me->gbInfoHeader.gbiCompression)
 		GreyBitFile_Decoder_Decompress(me->gbBitmap->buffer, &nDataLen, pByteData, nInDataLen);
 	else
@@ -346,7 +346,7 @@ GB_INT32 GreyBitFile_Decoder_Decode(GB_Decoder decoder, GB_UINT32 nCode, GB_Data
 		pData->width = (GB_INT16)nWidth;
 		pData->horioff = nHoriOff;
 	}
-	return 0;
+	return GB_SUCCESS;
 }
 
 void GreyBitFile_Decoder_Done(GB_Decoder decoder)

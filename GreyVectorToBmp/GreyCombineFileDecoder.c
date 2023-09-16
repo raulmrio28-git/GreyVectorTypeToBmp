@@ -12,10 +12,10 @@ GB_INT32 GreyCombineFile_Decoder_SetParam(GB_Decoder decoder, GB_Param nParam, G
 	for (nCurrItem = 0; nCurrItem < GCF_ITEM_MAX; ++nCurrItem)
 	{
 		gbCurrLoader = me->gbLoader[nCurrItem];
-		if (gbCurrLoader && GreyBit_Decoder_SetParam(gbCurrLoader->gbDecoder, nParam, dwParam) == 0)
-			return 0;
+		if (gbCurrLoader && GreyBit_Decoder_SetParam(gbCurrLoader->gbDecoder, nParam, dwParam) == GB_SUCCESS)
+			return GB_SUCCESS;
 	}
-	return -1;
+	return GB_FAILED;
 }
 
 GB_INT32 GreyCombineFile_Decoder_GetCount(GB_Decoder decoder)

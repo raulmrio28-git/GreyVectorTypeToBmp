@@ -111,8 +111,8 @@ GB_INT32 GreyBit_Close_Mem(GB_IOHandler f)
 {
 	GreyBit_Free_Sys(f);
 	if (f != 0)
-		return -1;
-	return 0;
+		return GB_FAILED;
+	return GB_SUCCESS;
 }
 
 GB_Stream GreyBit_Stream_New(const char* filepathname, char bcreate)
@@ -194,7 +194,7 @@ GB_INT32 GreyBit_Stream_Read(GB_Stream stream, GB_BYTE *p, GB_INT32 size)
 	if (stream->read)
 		return stream->read(stream->handler, p, size);
 	else
-		return 0;
+		return GB_SUCCESS;
 }
 
 GB_INT32 GreyBit_Stream_Write(GB_Stream stream, GB_BYTE *p, GB_INT32 size)
@@ -202,7 +202,7 @@ GB_INT32 GreyBit_Stream_Write(GB_Stream stream, GB_BYTE *p, GB_INT32 size)
 	if (stream->write)
 		return stream->write(stream->handler, p, size);
 	else
-		return 0;
+		return GB_SUCCESS;
 }
 
 GB_INT32 GreyBit_Stream_Seek(GB_Stream stream, GB_INT32 pos)
@@ -210,7 +210,7 @@ GB_INT32 GreyBit_Stream_Seek(GB_Stream stream, GB_INT32 pos)
 	if (stream->seek)
 		return stream->seek(stream->handler, stream->offset + pos);
 	else
-		return 0;
+		return GB_SUCCESS;
 }
 
 GB_INT32     GreyBit_Stream_Offset(GB_Stream stream, GB_INT32 offset, GB_INT32 size)
@@ -230,7 +230,7 @@ GB_INT32     GreyBit_Stream_Offset(GB_Stream stream, GB_INT32 offset, GB_INT32 s
 	if (stream->seek)
 		return stream->seek(stream->handler, stream->offset);
 	else
-		return 0;
+		return GB_SUCCESS;
 }
 
 void GreyBit_Stream_Done(GB_Stream stream)

@@ -55,6 +55,11 @@ typedef struct _GB_CreatorRec
 	GB_EncoderRec *gbEncoder;
 } GB_CreatorRec, *GB_Creator;
 
+typedef struct tagSECTIONOINFO
+{
+	GB_UINT16 gbSectionOff[146];
+} SECTIONOINFO;
+
 typedef GB_Decoder(*GB_DECODER_NEW)(GB_Loader loader, GB_Stream stream);
 typedef GB_BOOL(*GB_PROBE)(GB_Stream stream);
 typedef GB_INT32(*GB_DECODER_SETCACHE)(GB_Decoder decoder, GB_INT32 nCacheItem);

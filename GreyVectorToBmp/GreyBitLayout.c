@@ -32,8 +32,8 @@ int GreyBitType_Layout_Bold(GB_Layout layout)
 	pSrc = bitmap->buffer;
 	yMax = bitmap->height;
 	nOff = yMax >> 5;
-	if (!(yMax >> 5))
-		return 0;
+	if (!nOff)
+		return GB_FAILED;
 	if (nOff > 4)
 		nOff = 4;
 	if (bitmap->bitcount == 8)
@@ -57,7 +57,7 @@ int GreyBitType_Layout_Bold(GB_Layout layout)
 	else
 	{
 		if (bitmap->bitcount != 1)
-			return -1;
+			return GB_FAILED;
 		pDsta = layout->gbSwitchBuf;
 		xMaxa = bitmap->pitch;
 		for (ya = 0; ya < yMax; ++ya)
@@ -73,7 +73,7 @@ int GreyBitType_Layout_Bold(GB_Layout layout)
 		}
 	}
 	layout->gbSwitchBuf = GreyBitType_Bitmap_SwitcBuffer(bitmap, layout->gbSwitchBuf);
-	return 0;
+	return GB_SUCCESS;
 }
 
 int GreyBitType_Layout_Italic(GB_Layout layout)
@@ -102,7 +102,7 @@ int GreyBitType_Layout_Italic(GB_Layout layout)
 	yMax = bitmap->height;
 	nHalfOffMax = yMax >> 3;
 	if (!(yMax >> 2))
-		return 0;
+		return GB_FAILED;
 	if (bitmap->bitcount == 8)
 	{
 		pDst = layout->gbSwitchBuf;
@@ -129,7 +129,7 @@ int GreyBitType_Layout_Italic(GB_Layout layout)
 	else
 	{
 		if (bitmap->bitcount != 1)
-			return -1;
+			return GB_FAILED;
 		pDsta = layout->gbSwitchBuf;
 		xMaxb = bitmap->pitch;
 		for (ya = 0; ya < yMax; ++ya)
@@ -156,7 +156,7 @@ int GreyBitType_Layout_Italic(GB_Layout layout)
 		}
 	}
 	layout->gbSwitchBuf = GreyBitType_Bitmap_SwitcBuffer(bitmap, layout->gbSwitchBuf);
-	return 0;
+	return GB_SUCCESS;
 }
 
 void GreyBitType_Layout_BMP8Scale8(GB_BYTE *pBitsDst, GB_INT16 wWidthDst, GB_INT16 wHeightDst, GB_INT16 nPitchDst, GB_BYTE *pBitsSrc, GB_INT16 wWidthSrc, GB_INT16 wHeightSrc, GB_INT16 nPitchSrc)
@@ -343,7 +343,7 @@ int GreyBitType_Layout_ScaleBitmap(GB_Bitmap dst, GB_Bitmap src)
 				src->height,
 				src->pitch);
 	}
-	return 0;
+	return GB_SUCCESS;
 }
 
 GBHANDLE GreyBitType_Layout_New(GBHANDLE loader, GB_INT16 nSize, GB_INT16 nBitCount, GB_BOOL bBold, GB_BOOL bItalic)
@@ -389,11 +389,11 @@ int GreyBitType_Layout_LoadChar(GBHANDLE layout, GB_UINT32 nCode, GB_Bitmap *pBm
 	GB_Layout me = (GB_Layout)layout;
 
 	if (!me->gbBitmap)
-		return -1;
+		return GB_FAILED;
 	if (me->dwCode != nCode)
 	{
-		if (GreyBit_Decoder_Decode(me->gbDecoder, nCode, &data, me->nSize))
-			return -1;
+		if (GreyBit_Decoder_Decode(me->gbDecoder, nCode, &data, me->nSize) != GB_SUCCESS)
+			return GB_FAILED;
 #ifdef ENABLE_GREYVECTORFILE
 		if (data.format == GB_FORMAT_BITMAP)
 		{
@@ -402,7 +402,7 @@ int GreyBitType_Layout_LoadChar(GBHANDLE layout, GB_UINT32 nCode, GB_Bitmap *pBm
 		else
 		{
 			if (data.format != GB_FORMAT_OUTLINE)
-				return -1;
+				return GB_FAILED;
 			if (me->gbBitmap8)
 				bitmap = me->gbBitmap8;
 			else
@@ -435,7 +435,7 @@ int GreyBitType_Layout_LoadChar(GBHANDLE layout, GB_UINT32 nCode, GB_Bitmap *pBm
 	}
 	if (pBmp)
 		*pBmp = me->gbBitmap;
-	return 0;
+	return GB_SUCCESS;
 }
 
 void GreyBitType_Layout_Done(GBHANDLE layout)

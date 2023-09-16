@@ -266,7 +266,7 @@ int gray_record_cell(RAS_ARG)
 		cell->area += ras.area;
 		cell->cover += ras.cover;
 	}
-	return 0;
+	return GB_SUCCESS;
 }
 
 void gray_set_cell(RAS_ARG_ TCoord ex, TCoord ey)
@@ -821,25 +821,25 @@ int gray_move_to(const GB_Vector* to, PWorker worker)
 
 	worker->x = x;
 	worker->y = y;
-	return 0;
+	return GB_SUCCESS;
 }
 
 int gray_line_to(const GB_Vector* to, PWorker worker)
 {
 	gray_render_line(RAS_VAR_ UPSCALE(to->x), UPSCALE(to->y));
-	return 0;
+	return GB_SUCCESS;
 }
 
 int gray_conic_to(const GB_Vector* control, const GB_Vector* to, PWorker worker)
 {
 	gray_render_conic(RAS_VAR_ control, to);
-	return 0;
+	return GB_SUCCESS;
 }
 
 int gray_cubic_to(const GB_Vector* control1, const GB_Vector* control2, const GB_Vector* to, PWorker worker)
 {
 	gray_render_cubic(RAS_VAR_ control1, control2, to);
-	return 0;
+	return GB_SUCCESS;
 }
 
 void gray_render_span(int y, int count, const GB_Span* spans, PWorker worker)
@@ -1022,7 +1022,7 @@ int GB_Outline_Decompose(GB_Outline outline, const GB_Outline_Funcs* func_interf
 
 
 	if (!outline || !func_interface)
-		return -3;
+		return GB_FAILED;
 
 	shift = func_interface->shift;
 	delta = func_interface->delta;
@@ -1191,7 +1191,7 @@ int GB_Outline_Decompose(GB_Outline outline, const GB_Outline_Funcs* func_interf
 
 		first = last + 1;
 	}
-	return 0;
+	return GB_SUCCESS;
 
 Exit:
 	return error;
@@ -1224,7 +1224,7 @@ int gray_convert_glyph(RAS_ARG)
 
 	if (ras.max_ex <= clip->xMin || ras.min_ex >= clip->xMax ||
 		ras.max_ey <= clip->yMin || ras.min_ey >= clip->yMax)
-		return 0;
+		return GB_FAILED;
 
 	if (ras.min_ex < clip->xMin) ras.min_ex = clip->xMin;
 	if (ras.min_ey < clip->yMin) ras.min_ey = clip->yMin;
@@ -1307,7 +1307,7 @@ int gray_convert_glyph(RAS_ARG)
 				continue;
 			}
 			else if (error != -4)
-				return 1;
+				return GB_FAILED;
 
 		ReduceBands:
 			/* render pool overflow; we will reduce the render band by half */
@@ -1319,7 +1319,7 @@ int gray_convert_glyph(RAS_ARG)
 			/* be some problems.                                     */
 			if (middle == bottom)
 			{
-				return 1;
+				return GB_FAILED;
 			}
 
 			if (bottom - top >= ras.band_size)
@@ -1336,29 +1336,28 @@ int gray_convert_glyph(RAS_ARG)
 	if (ras.band_shoot > 8 && ras.band_size > 16)
 		ras.band_size = ras.band_size / 2;
 
-	return 0;
+	return GB_SUCCESS;
 }
 
 int GreyBit_Raster_Render(void *raster, GB_Bitmap tobitmap, GB_Outline fromoutline)
 {
 	PRaster me = (PRaster)raster;
-	PWorker worker;
+	PWorker worker = me->worker;
 
 	if (!fromoutline)
-		return -1;
+		return GB_FAILED;
 	if (!fromoutline->n_points || fromoutline->n_contours <= 0)
-		return 0;
+		return GB_FAILED;
 	if (!fromoutline->contours || !fromoutline->points)
-		return -1;
+		return GB_FAILED;
 	if (fromoutline->n_points != fromoutline->contours[fromoutline->n_contours - 1] + 1)
-		return -1;
-	worker = me->worker;
+		return GB_FAILED;
 	if (!tobitmap)
-		return -3;
+		return GB_FAILED;
 	if (!tobitmap->width || !tobitmap->height)
-		return 0;
+		return GB_FAILED;
 	if (!tobitmap->buffer)
-		return -3;
+		return GB_FAILED;
 	worker->clip_box.xMin = 0;
 	worker->clip_box.yMin = 0;
 	worker->clip_box.xMax = tobitmap->width;

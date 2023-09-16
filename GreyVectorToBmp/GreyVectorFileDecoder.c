@@ -12,9 +12,9 @@ GB_UINT32 GreyVectorFile_Decoder_GetDataOffset(GVF_Decoder me, GB_UINT32 nCode)
 	GB_INT32 UniIndex;
 
 	UniIndex = UnicodeSection_GetIndex((GB_UINT16)nCode);
+	SectionIndex = me->gbInfoHeader.gbiIndexSection.gbSectionOff[UniIndex];
 	if (UniIndex >= UNICODE_SECTION_NUM)
 		return 0;
-	SectionIndex = me->gbInfoHeader.gbiIndexSection.gbSectionOff[UniIndex];
 	if (!SectionIndex)
 		return 0;
 	SectionIndex--;
@@ -40,19 +40,19 @@ GB_INT32 GreyVectorFile_Decoder_CaheItem(GVF_Decoder me, GB_UINT32 nCode, GB_Out
 	GB_INT32 UniIndex;
 
 	if (me->nGreyBitsCount >= me->nCacheItem || !me->gbOffsetTable)
-		return -1;
+		return GB_FAILED;
 	UniIndex = UnicodeSection_GetIndex((GB_UINT16)nCode);
 	if (UniIndex >= UNICODE_SECTION_NUM)
-		return -1;
+		return GB_FAILED;
 	SectionIndex = me->gbInfoHeader.gbiIndexSection.gbSectionOff[UniIndex];
 	if (!SectionIndex)
-		return -1;
+		return GB_FAILED;
 	me->gpGreyBits[me->nGreyBitsCount] = GreyBitType_Outline_Clone(me->gbLibrary, outline);
 	UnicodeSection_GetSectionInfo(UniIndex, &nMinCode, 0);
 	SectionIndex--;
 	SectionIndex += (GB_UINT16)nCode - nMinCode;
 	me->gbOffsetTable[SectionIndex] = SET_RAM(me->nGreyBitsCount++);
-	return 0;
+	return GB_SUCCESS;
 }
 
 void GreyVectorFile_Decoder_ClearCache(GVF_Decoder me)
@@ -85,18 +85,18 @@ GB_INT32 GreyVectorFile_Decoder_InfoInit(GVF_Decoder me, GB_INT16 nMaxWidth, GB_
 	me->gbOutline = GreyBitType_Outline_New(me->gbLibrary, nMaxContours, nMaxPoints);
 	me->nBuffSize = GreyVector_Outline_GetSizeEx((GB_BYTE)nMaxContours, (GB_BYTE)nMaxPoints) + sizeof(GVF_OutlineRec);
 	me->pBuff = (GB_BYTE *)GreyBit_Malloc(me->gbMem, me->nBuffSize);
-	return 0;
+	return GB_SUCCESS;
 }
 
 GB_INT32 GreyVectorFile_Decoder_ReadHeader(GVF_Decoder me)
 {
 	GreyBit_Stream_Seek(me->gbStream, 0);
 	if (GreyBit_Stream_Read(me->gbStream, (GB_BYTE*)&me->gbFileHeader, sizeof(GREYVECTORFILEHEADER)) != sizeof(GREYVECTORFILEHEADER))
-		return -1;
+		return GB_FAILED;
 	GreyBit_Stream_Read(me->gbStream, (GB_BYTE*)&me->gbInfoHeader, sizeof(GREYVECTORINFOHEADER));
 	me->nItemCount = me->gbInfoHeader.gbiCount;
 	GreyVectorFile_Decoder_InfoInit(me, me->gbInfoHeader.gbiWidth, me->gbInfoHeader.gbiHeight, me->gbInfoHeader.gbiMaxPoints, me->gbInfoHeader.gbiMaxContours);
-	return 0;
+	return GB_SUCCESS;
 }
 
 GB_INT32 GreyVectorFile_Decoder_Init(GVF_Decoder me)
@@ -122,7 +122,7 @@ GB_INT32 GreyVectorFile_Decoder_Init(GVF_Decoder me)
 	me->gbOffsetTable = (GB_UINT32 *)GreyBit_Malloc(me->gbMem, nDataSizeb);
 	GreyBit_Stream_Seek(me->gbStream, me->gbInfoHeader.gbiOffsetTabOff + me->gbOffDataBits);
 	GreyBit_Stream_Read(me->gbStream, (GB_BYTE*)me->gbOffsetTable, nDataSizeb);
-	return 0;
+	return GB_SUCCESS;
 }
 
 GB_INT32 GreyVectorFile_Decoder_SetParam(GB_Decoder decoder, GB_Param nParam, GB_UINT32 dwParam)
@@ -133,18 +133,18 @@ GB_INT32 GreyVectorFile_Decoder_SetParam(GB_Decoder decoder, GB_Param nParam, GB
 		if (nParam)
 		{
 			if (me->gpGreyBits)
-				return -1;
+				return GB_FAILED;
 			me->nCacheItem = dwParam;
 			me->gpGreyBits = (GB_Outline*)GreyBit_Malloc(me->gbMem, 4 * me->nCacheItem);
 			me->nGreyBitsCount = 0;
 		}
 	}
-	return 0;
+	return GB_SUCCESS;
 }
 
 GB_INT32 GreyVectorFile_Decoder_GetHeight(GB_Decoder decoder)
 {
-	return 0;
+	return GB_SUCCESS;
 }
 
 GB_INT32 GreyVectorFile_Decoder_GetCount(GB_Decoder decoder)
@@ -161,9 +161,9 @@ GB_INT32 GreyVectorFile_Decoder_GetWidth(GB_Decoder decoder, GB_UINT32 nCode, GB
 	GB_INT32 WidthIdx;
 	GVF_Decoder me = (GVF_Decoder)decoder;
 	UniIndex = UnicodeSection_GetIndex((GB_UINT16)nCode);
+	WidthIdx = me->gbInfoHeader.gbiWidthSection.gbSectionOff[UniIndex];
 	if (UniIndex >= UNICODE_SECTION_NUM)
 		return 0;
-	WidthIdx = me->gbInfoHeader.gbiWidthSection.gbSectionOff[UniIndex];
 	if (!WidthIdx)
 		return 0;
 	WidthIdx--;
@@ -192,9 +192,9 @@ GB_INT16 GreyVectorFile_Decoder_GetHoriOff(GB_Decoder decoder, GB_UINT32 nCode, 
 
 	me = (GVF_Decoder)decoder;
 	UniIndex = UnicodeSection_GetIndex((GB_UINT16)nCode);
+	HoriOffIdx = me->gbInfoHeader.gbiWidthSection.gbSectionOff[UniIndex];
 	if (UniIndex >= UNICODE_SECTION_NUM)
 		return 0;
-	HoriOffIdx = me->gbInfoHeader.gbiWidthSection.gbSectionOff[UniIndex];
 	if (!HoriOffIdx)
 		return 0;
 	HoriOffIdx--;
@@ -238,7 +238,7 @@ GB_INT32 GreyVectorFile_Decoder_Decode(GB_Decoder decoder, GB_UINT32 nCode, GB_D
 	nWidth = GreyVectorFile_Decoder_GetWidth(decoder, nCode, nSize);
 	nHoriOff = GreyVectorFile_Decoder_GetHoriOff(decoder, nCode, nSize);
 	if (!nWidth)
-		return -1;
+		return GB_FAILED;
 	if (!IS_INRAM(Offset))
 	{
 		GreyBit_Stream_Seek(me->gbStream, me->gbInfoHeader.gbiOffGreyBits + me->gbOffDataBits + Offset);
@@ -253,7 +253,7 @@ GB_INT32 GreyVectorFile_Decoder_Decode(GB_Decoder decoder, GB_UINT32 nCode, GB_D
 		outline = me->gpGreyBits[Offset];
 	}
 	if (!outline)
-		return -1;
+		return GB_FAILED;
 	GreyBitType_Outline_Transform(me->gbOutline, outline, nSize, me->gbInfoHeader.gbiHeight);
 	if (pData)
 	{
@@ -262,7 +262,7 @@ GB_INT32 GreyVectorFile_Decoder_Decode(GB_Decoder decoder, GB_UINT32 nCode, GB_D
 		pData->width = (GB_INT16)nWidth;
 		pData->horioff = (GB_INT16)nHoriOff;
 	}
-	return 0;
+	return GB_SUCCESS;
 }
 
 void GreyVectorFile_Decoder_Done(GB_Decoder decoder)

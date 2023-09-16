@@ -41,7 +41,7 @@ GB_INT32 GreyVectorFile_Encoder_InfoInit(GVF_Encoder me, GB_INT16 nHeight)
 	if (me->gbInited)
 	{
 		if (me->gbInfoHeader.gbiHeight == nHeight)
-			return 0;
+			return GB_SUCCESS;
 		GreyBit_Memset_Sys(me->gbWidthTable, 0, MAX_COUNT);
 		GreyBit_Memset_Sys(me->gbHoriOffTable, 0, MAX_COUNT);
 		GreyBit_Memset_Sys(me->gbOffsetTable, 0, sizeof(GB_UINT32)*MAX_COUNT);
@@ -57,31 +57,34 @@ GB_INT32 GreyVectorFile_Encoder_InfoInit(GVF_Encoder me, GB_INT16 nHeight)
 	}
 	me->gbInited = 1;
 	me->gbInfoHeader.gbiHeight = nHeight;
-	return 0;
+	return GB_SUCCESS;
 }
 
 GB_INT32 GreyVectorFile_Encoder_SetParam(GB_Encoder encoder, GB_Param nParam, GB_UINT32 dwParam)
 {
 	GVF_Encoder me = (GVF_Encoder)encoder;
 	if (nParam == GB_PARAM_HEIGHT)
-		me->nHeight = dwParam;
+	{
+		if (dwParam)
+			me->nHeight = (GB_UINT16)dwParam;
+	}
 	GreyVectorFile_Encoder_InfoInit(me, me->nHeight);
-	return 0;
+	return GB_SUCCESS;
 }
 
 GB_INT32 GreyVectorFile_Encoder_Delete(GB_Encoder encoder, GB_UINT32 nCode)
 {
 	GVF_Encoder me = (GVF_Encoder)encoder;
 	me->gbOffsetTable[nCode] = 0;
-	me->gbHoriOffTable[nCode] = 0;
-	me->gbWidthTable[nCode] = 0;
+	me->gbHoriOffTable[nCode] = GB_HORIOFF_DEFAULT;
+	me->gbWidthTable[nCode] = GB_WIDTH_DEFAULT;
 	if (me->gpGreyBits[nCode])
 	{
 		GreyBitType_Outline_Done(me->gbLibrary, me->gpGreyBits[nCode]);
 		me->gpGreyBits[nCode] = 0;
 		me->pnGreySize[nCode] = 0;
 	}
-	return 0;
+	return GB_SUCCESS;
 }
 
 GB_INT32 GreyVectorFile_Encoder_Encode(GB_Encoder encoder, GB_UINT32 nCode, GB_Data pData)
@@ -91,13 +94,13 @@ GB_INT32 GreyVectorFile_Encoder_Encode(GB_Encoder encoder, GB_UINT32 nCode, GB_D
 	GB_Outline source;
 	GVF_Encoder me = (GVF_Encoder)encoder;
 	if (!pData || pData->format != GB_FORMAT_OUTLINE)
-		return -1;
+		return GB_FAILED;
 	if (!me->nHeight || !me->gbInited)
-		return -1;
+		return GB_FAILED;
 	nWidth = pData->width;
 	source = (GB_Outline)pData->data;
 	if (source->n_points > 255)
-		return -2;
+		return GB_FAILED;
 	if (me->gbInfoHeader.gbiWidth < nWidth)
 		me->gbInfoHeader.gbiWidth = nWidth;
 	if (me->gbInfoHeader.gbiMaxPoints < source->n_points)
@@ -112,7 +115,7 @@ GB_INT32 GreyVectorFile_Encoder_Encode(GB_Encoder encoder, GB_UINT32 nCode, GB_D
 	me->gbOffsetTable[nCode] = SET_RAM(nCode);
 	me->gbWidthTable[nCode] = (GB_BYTE)nWidth;
 	me->gbHoriOffTable[nCode] = (GB_BYTE)pData->horioff;
-	return 0;
+	return GB_SUCCESS;
 }
 
 GB_INT32 GreyVectorFile_Encoder_WriteAll(GVF_Encoder me)
@@ -174,7 +177,7 @@ GB_INT32 GreyVectorFile_Encoder_WriteAll(GVF_Encoder me)
 			GreyVector_Outline_Done(me->gbLibrary, outline);
 		}
 	}
-	return 0;
+	return GB_SUCCESS;
 }
 
 GB_INT32 GreyVectorFile_Encoder_BuildAll(GVF_Encoder me)
@@ -234,7 +237,7 @@ GB_INT32 GreyVectorFile_Encoder_BuildAll(GVF_Encoder me)
 	me->gbFileHeader.gbfTag[1] = 'v';
 	me->gbFileHeader.gbfTag[2] = 't';
 	me->gbFileHeader.gbfTag[3] = 'f';
-	return 0;
+	return GB_SUCCESS;
 }
 
 GB_INT32 GreyVectorFile_Encoder_Flush(GB_Encoder encoder)
@@ -243,7 +246,7 @@ GB_INT32 GreyVectorFile_Encoder_Flush(GB_Encoder encoder)
 
 	GreyVectorFile_Encoder_BuildAll(me);
 	GreyVectorFile_Encoder_WriteAll(me);
-	return 0;
+	return GB_SUCCESS;
 }
 
 void GreyVectorFile_Encoder_Done(GB_Encoder encoder)
@@ -268,7 +271,7 @@ GB_INT32 GreyVectorFile_Encoder_Init(GVF_Encoder me)
 	me->nCacheItem = MAX_COUNT;
 	GreyBit_Memset_Sys(me->gbWidthTable, 0, MAX_COUNT);
 	GreyBit_Memset_Sys(me->gbHoriOffTable, 0, MAX_COUNT);
-	return 0;
+	return GB_SUCCESS;
 }
 
 GB_Encoder GreyVectorFile_Encoder_New(GB_Creator creator, GB_Stream stream)

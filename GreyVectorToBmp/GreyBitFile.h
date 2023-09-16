@@ -1,3 +1,4 @@
+#pragma once
 #ifndef GREYBITFILE_H_
 #define GREYBITFILE_H_
 #include "GreyBitType.h"
@@ -12,11 +13,6 @@ typedef struct tagGREYBITFILEHEADER
 } GREYBITFILEHEADER;
 #pragma pack()
 
-typedef struct tagB_SECTIONOINFO
-{
-	GB_UINT16 gbSectionOff[146];
-} B_SECTIONOINFO;
-
 #pragma pack(1)
 typedef struct tagGREYBITINFOHEADER
 {
@@ -30,8 +26,8 @@ typedef struct tagGREYBITINFOHEADER
 	GB_UINT32 gbiHoriOffTabOff;
 	GB_UINT32 gbiOffsetTabOff;
 	GB_UINT32 gbiOffGreyBits;
-	B_SECTIONOINFO gbiWidthSection;
-	B_SECTIONOINFO gbiIndexSection;
+	SECTIONOINFO gbiWidthSection;
+	SECTIONOINFO gbiIndexSection;
 } GREYBITINFOHEADER;
 #pragma pack()
 
@@ -57,14 +53,15 @@ typedef struct GBF_DecoderRec
 	GB_INT16 *pnGreySize;
 } GBF_DecoderRec, *GBF_Decoder;
 
+#ifdef ENABLE_ENCODER
 typedef struct GBF_EncoderRec
 {
 	GB_EncoderRec gbEncoder;
 	GB_Library gbLibrary;
 	GB_Memory gbMem;
 	GB_Stream gbStream;
-	GB_UINT32 nHeight;
-	GB_UINT32 nBitCount;
+	GB_UINT16 nHeight;
+	GB_INT16 nBitCount;
 	GB_BOOL bCompress;
 	GB_BOOL gbInited;
 	GB_INT32 nCacheItem;
@@ -78,6 +75,7 @@ typedef struct GBF_EncoderRec
 	GB_BYTE **gpGreyBits;
 	GB_UINT16 *pnGreySize;
 } GBF_EncoderRec, *GBF_Encoder;
+#endif //ENABLE_ENCODER
 
 #define MAX_COUNT 0x10000
 #define LEN_MASK 0x80

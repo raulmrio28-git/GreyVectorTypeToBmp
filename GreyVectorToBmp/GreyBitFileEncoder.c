@@ -39,7 +39,7 @@ GB_INT32 GreyBitFile_Encoder_InfoInit(GBF_Encoder me, GB_INT16 nHeight, GB_INT16
 	if (me->gbInited)
 	{
 		if (me->gbInfoHeader.gbiHeight == nHeight || me->gbInfoHeader.gbiBitCount == nBitCount || me->gbInfoHeader.gbiHeight == nHeight)
-			return 0;
+			return GB_SUCCESS;
 		GreyBit_Memset_Sys(me->gbWidthTable, 0, MAX_COUNT);
 		GreyBit_Memset_Sys(me->gbHoriOffTable, 0, MAX_COUNT);
 		GreyBit_Memset_Sys(me->gbOffsetTable, 0, sizeof(GB_UINT32)*MAX_COUNT);
@@ -60,39 +60,48 @@ GB_INT32 GreyBitFile_Encoder_InfoInit(GBF_Encoder me, GB_INT16 nHeight, GB_INT16
 		me->gbInfoHeader.gbiCompression = bCompress;
 	else
 		me->gbInfoHeader.gbiCompression = 0;
-	return 0;
+	return GB_SUCCESS;
 }
 
 GB_INT32 GreyBitFile_Encoder_SetParam(GB_Encoder encoder, GB_Param nParam, GB_UINT32 dwParam)
 {
 	GBF_Encoder me = (GBF_Encoder)encoder;
 	if (nParam == GB_PARAM_HEIGHT)
-		me->nHeight = dwParam;
+	{
+		if (dwParam)
+			me->nHeight = (GB_UINT16)dwParam;
+	}
 	if (nParam == GB_PARAM_BITCOUNT)
-		me->nBitCount = dwParam;
+	{
+		if (dwParam)
+			me->nBitCount = (GB_INT16)dwParam;
+	}
 	if (nParam ==GB_PARAM_COMPRESS)
-		me->bCompress = (GB_BOOL)dwParam;
+	{
+		if (dwParam)
+			me->bCompress = (GB_BOOL)dwParam;
+	}
 	GreyBitFile_Encoder_InfoInit(
 		me,
 		me->nHeight,
 		me->nBitCount,
 		me->bCompress);
-	return 0;
+	return GB_SUCCESS;
 }
 
 GB_INT32 GreyBitFile_Encoder_Delete(GB_Encoder encoder, GB_UINT32 nCode)
 {
 	GBF_Encoder me = (GBF_Encoder)encoder;
 	me->gbOffsetTable[nCode] = 0;
-	me->gbHoriOffTable[nCode] = 0;
-	me->gbWidthTable[nCode] = 0;
+	me->gbHoriOffTable[nCode] = GB_HORIOFF_DEFAULT;
+	me->gbWidthTable[nCode] = GB_WIDTH_DEFAULT;
 	if (me->gpGreyBits[nCode])
 	{
 		GreyBit_Free(me->gbMem, me->gpGreyBits[nCode]);
 		me->gpGreyBits[nCode] = 0;
 	}
 	me->pnGreySize[nCode] = 0;
-	return 0;
+	return GB_SUCCESS;
 }
 
 GB_INT32 GreyBitFile_Encoder_Compress(GB_BYTE *pOutData, GB_INT32 *pnInOutLen, GB_BYTE *pInData, GB_INT32 nInDataLen)
@@ -159,7 +168,7 @@ GB_INT32 GreyBitFile_Encoder_Compress(GB_BYTE *pOutData, GB_INT32 *pnInOutLen, G
 			nCompressLena = nCompressLen + 1;
 	}
 	*pnInOutLen = nCompressLena;
-	return 0;
+	return GB_SUCCESS;
 }
 
 GB_INT32 GreyBitFile_Encoder_Encode(GB_Encoder encoder, GB_UINT32 nCode, GB_Data pData)
@@ -170,15 +179,15 @@ GB_INT32 GreyBitFile_Encoder_Encode(GB_Encoder encoder, GB_UINT32 nCode, GB_Data
 	GB_Bitmap bitmap;
 	GBF_Encoder me = (GBF_Encoder)encoder;
 	if (!pData || pData->format != GB_FORMAT_BITMAP)
-		return -1;
+		return GB_FAILED;
 	if (!me->nHeight || !me->nBitCount || !me->gbInited)
-		return -1;
+		return GB_FAILED;
 	bitmap = (GB_Bitmap)pData->data;
 	if (bitmap->bitcount != me->gbInfoHeader.gbiBitCount
 		|| bitmap->height != me->gbInfoHeader.gbiHeight
 		|| bitmap->width > 3 * bitmap->height)
 	{
-		return -1;
+		return GB_FAILED;
 	}
 	if (me->gbInfoHeader.gbiWidth < bitmap->width)
 		me->gbInfoHeader.gbiWidth = bitmap->width;
@@ -202,7 +211,7 @@ GB_INT32 GreyBitFile_Encoder_Encode(GB_Encoder encoder, GB_UINT32 nCode, GB_Data
 	me->gbOffsetTable[nCode] = SET_RAM(nCode);
 	me->gbWidthTable[nCode] = (GB_BYTE)bitmap->width;
 	me->gbHoriOffTable[nCode] = (GB_BYTE)bitmap->horioff;
-	return 0;
+	return GB_SUCCESS;
 }
 
 GB_INT32 GreyBitFile_Encoder_WriteAll(GBF_Encoder me)
@@ -276,7 +285,7 @@ GB_INT32 GreyBitFile_Encoder_WriteAll(GBF_Encoder me)
 			}
 		}
 	}
-	return 0;
+	return GB_SUCCESS;
 }
 
 GB_INT32 GreyBitFile_Encoder_BuildAll(GBF_Encoder me)
@@ -354,7 +363,7 @@ GB_INT32 GreyBitFile_Encoder_BuildAll(GBF_Encoder me)
 	me->gbFileHeader.gbfTag[1] = 'b';
 	me->gbFileHeader.gbfTag[2] = 't';
 	me->gbFileHeader.gbfTag[3] = 'f';
-	return 0;
+	return GB_SUCCESS;
 }
 
 GB_INT32 GreyBitFile_Encoder_Flush(GB_Encoder encoder)
@@ -363,7 +372,7 @@ GB_INT32 GreyBitFile_Encoder_Flush(GB_Encoder encoder)
 
 	GreyBitFile_Encoder_BuildAll(me);
 	GreyBitFile_Encoder_WriteAll(me);
-	return 0;
+	return GB_SUCCESS;
 }
 
 void GreyBitFile_Encoder_Done(GB_Encoder encoder)
@@ -389,7 +398,7 @@ GB_INT32 GreyBitFile_Encoder_Init(GBF_Encoder me)
 	me->nCacheItem = MAX_COUNT;
 	GreyBit_Memset_Sys(me->gbWidthTable, 0, MAX_COUNT);
 	GreyBit_Memset_Sys(me->gbHoriOffTable, 0, MAX_COUNT);
-	return 0;
+	return GB_SUCCESS;
 }
 
 GB_Encoder GreyBitFile_Encoder_New(GB_Creator creator, GB_Stream stream)
