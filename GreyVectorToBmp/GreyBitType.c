@@ -86,7 +86,7 @@ GB_Bitmap GreyBitType_Bitmap_New(GBHANDLE library, GB_INT16 nWidth, GB_INT16 nHe
 			return 0;
 		}
 		if (pInitBuf)
-			GreyBit_Memcpy_Sys(bitmap->buffer, pInitBuf, nBufSize);
+			GB_MEMCPY(bitmap->buffer, pInitBuf, nBufSize);
 	}
 	return bitmap;
 }

@@ -48,7 +48,7 @@ GB_INT32 GreyBitFile_Decoder_CaheItem(GBF_Decoder me, GB_UINT32 nCode, GB_BYTE *
 		return GB_FAILED;
 	me->gpGreyBits[me->nGreyBitsCount] = (GB_BYTE*)GreyBit_Malloc(me->gbMem, nDataSize);
 	me->pnGreySize[me->nGreyBitsCount] = (GB_INT16)nDataSize;
-	GreyBit_Memcpy_Sys(me->gpGreyBits[me->nGreyBitsCount], pData, nDataSize);
+	GB_MEMCPY(me->gpGreyBits[me->nGreyBitsCount], pData, nDataSize);
 	UnicodeSection_GetSectionInfo(UniIndex, &nMinCode, 0);
 	SectionIndex--;
 	SectionIndex += (GB_UINT16)nCode - nMinCode;
@@ -130,16 +130,16 @@ GB_INT32 GreyBitFile_Decoder_Init(GBF_Decoder me)
 GB_INT32 GreyBitFile_Decoder_SetParam(GB_Decoder decoder, GB_Param nParam, GB_UINT32 dwParam)
 {
 	GBF_Decoder me = (GBF_Decoder)decoder;
-	if (nParam == GB_PARAM_CACHEITEM)
+	if (dwParam)
 	{
-		if (dwParam)
+		if (nParam == GB_PARAM_CACHEITEM)
 		{
 			if (me->gpGreyBits)
-				return GB_FAILED;
-			me->nCacheItem = dwParam;
-			me->gpGreyBits = (GB_BYTE **)GreyBit_Malloc(me->gbMem, 4 * me->nCacheItem);
-			me->pnGreySize = (GB_UINT16*)GreyBit_Malloc(me->gbMem, 2 * me->nCacheItem);
-			me->nGreyBitsCount = 0;
+					return GB_FAILED;
+				me->nCacheItem = dwParam;
+				me->gpGreyBits = (GB_BYTE **)GreyBit_Malloc(me->gbMem, 4 * me->nCacheItem);
+				me->pnGreySize = (GB_UINT16*)GreyBit_Malloc(me->gbMem, 2 * me->nCacheItem);
+				me->nGreyBitsCount = 0;
 		}
 	}
 	return GB_SUCCESS;
@@ -147,7 +147,8 @@ GB_INT32 GreyBitFile_Decoder_SetParam(GB_Decoder decoder, GB_Param nParam, GB_UI
 
 GB_INT32 GreyBitFile_Decoder_GetHeight(GB_Decoder decoder)
 {
-	return 0;
+	GBF_Decoder me = (GBF_Decoder)decoder;
+	return me->gbInfoHeader.gbiHeight;
 }
 
 GB_INT32 GreyBitFile_Decoder_GetCount(GB_Decoder decoder)
@@ -338,7 +339,7 @@ GB_INT32 GreyBitFile_Decoder_Decode(GB_Decoder decoder, GB_UINT32 nCode, GB_Data
 	if (me->gbInfoHeader.gbiCompression)
 		GreyBitFile_Decoder_Decompress(me->gbBitmap->buffer, &nDataLen, pByteData, nInDataLen);
 	else
-		GreyBit_Memcpy_Sys(me->gbBitmap->buffer, pByteData, nDataLen);
+		GB_MEMCPY(me->gbBitmap->buffer, pByteData, nDataLen);
 	if (pData)
 	{
 		pData->format = GB_FORMAT_BITMAP;

@@ -133,10 +133,10 @@ GB_Stream GreyBit_Stream_New(const char* filepathname, char bcreate)
 		stream->close = GreyBit_Close_Sys;
 		stream->handler = f;
 		stream->size = GreyBit_GetSize_Sys(stream->handler);
-		stream->pfilename = (char *)GreyBit_Malloc_Sys(GreyBit_Strlen_Sys(filepathname) + 1);
+		stream->pfilename = (char *)GreyBit_Malloc_Sys(GB_STRLEN(filepathname) + 1);
 		stream->offset = 0;
 		stream->refcnt = 1;
-		GreyBit_Strcpy_Sys(stream->pfilename, filepathname);
+		GB_STRCPY(stream->pfilename, filepathname);
 	}
 	return stream;
 }

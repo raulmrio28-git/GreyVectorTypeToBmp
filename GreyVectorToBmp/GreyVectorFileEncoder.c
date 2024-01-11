@@ -42,9 +42,9 @@ GB_INT32 GreyVectorFile_Encoder_InfoInit(GVF_Encoder me, GB_INT16 nHeight)
 	{
 		if (me->gbInfoHeader.gbiHeight == nHeight)
 			return GB_SUCCESS;
-		GreyBit_Memset_Sys(me->gbWidthTable, 0, MAX_COUNT);
-		GreyBit_Memset_Sys(me->gbHoriOffTable, 0, MAX_COUNT);
-		GreyBit_Memset_Sys(me->gbOffsetTable, 0, sizeof(GB_UINT32)*MAX_COUNT);
+		GB_MEMSET(me->gbWidthTable, 0, MAX_COUNT);
+		GB_MEMSET(me->gbHoriOffTable, 0, MAX_COUNT);
+		GB_MEMSET(me->gbOffsetTable, 0, sizeof(GB_UINT32)*MAX_COUNT);
 		for (i = 0; i < me->nCacheItem; ++i)
 		{
 			if (me->gpGreyBits[i])
@@ -63,9 +63,9 @@ GB_INT32 GreyVectorFile_Encoder_InfoInit(GVF_Encoder me, GB_INT16 nHeight)
 GB_INT32 GreyVectorFile_Encoder_SetParam(GB_Encoder encoder, GB_Param nParam, GB_UINT32 dwParam)
 {
 	GVF_Encoder me = (GVF_Encoder)encoder;
-	if (nParam == GB_PARAM_HEIGHT)
+	if (dwParam)
 	{
-		if (dwParam)
+		if (nParam == GB_PARAM_HEIGHT)
 			me->nHeight = (GB_UINT16)dwParam;
 	}
 	GreyVectorFile_Encoder_InfoInit(me, me->nHeight);
@@ -269,8 +269,8 @@ GB_INT32 GreyVectorFile_Encoder_Init(GVF_Encoder me)
 	me->gpGreyBits = (GB_Outline *)GreyBit_Malloc(me->gbMem, sizeof(GB_Outline)*MAX_COUNT);
 	me->pnGreySize = (GB_UINT16 *)GreyBit_Malloc(me->gbMem, sizeof(GB_UINT16)*MAX_COUNT);
 	me->nCacheItem = MAX_COUNT;
-	GreyBit_Memset_Sys(me->gbWidthTable, 0, MAX_COUNT);
-	GreyBit_Memset_Sys(me->gbHoriOffTable, 0, MAX_COUNT);
+	GB_MEMSET(me->gbWidthTable, 0, MAX_COUNT);
+	GB_MEMSET(me->gbHoriOffTable, 0, MAX_COUNT);
 	return GB_SUCCESS;
 }
 

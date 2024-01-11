@@ -40,7 +40,7 @@ int GreyBitType_Layout_Bold(GB_Layout layout)
 	{
 		pDst = &layout->gbSwitchBuf[nOff];
 		xMax = bitmap->pitch - nOff;
-		GreyBit_Memcpy_Sys(layout->gbSwitchBuf, bitmap->buffer, layout->nSwitchBufLen);
+		GB_MEMCPY(layout->gbSwitchBuf, bitmap->buffer, layout->nSwitchBufLen);
 		for (y = 0; y < yMax; ++y)
 		{
 			for (x = 0; x < xMax; ++x)
@@ -106,7 +106,7 @@ int GreyBitType_Layout_Italic(GB_Layout layout)
 	if (bitmap->bitcount == 8)
 	{
 		pDst = layout->gbSwitchBuf;
-		GreyBit_Memset_Sys(pDst, 0, layout->nSwitchBufLen);
+		GB_MEMSET(pDst, 0, layout->nSwitchBufLen);
 		for (y = 0; y < yMax; ++y)
 		{
 			nOff = (GB_INT16)(y >> 2) - nHalfOffMax;
@@ -410,7 +410,7 @@ int GreyBitType_Layout_LoadChar(GBHANDLE layout, GB_UINT32 nCode, GB_Bitmap *pBm
 			bitmap->width = data.width;
 			bitmap->pitch = data.width;
 			bitmap->horioff = data.horioff;
-			GreyBit_Memset_Sys(bitmap->buffer, 0, bitmap->height * bitmap->pitch);
+			GB_MEMSET(bitmap->buffer, 0, bitmap->height * bitmap->pitch);
 			GreyBit_Raster_Render(me->gbRaster, bitmap, data.data);
 		}
 #else

@@ -128,9 +128,9 @@ GB_INT32 GreyVectorFile_Decoder_Init(GVF_Decoder me)
 GB_INT32 GreyVectorFile_Decoder_SetParam(GB_Decoder decoder, GB_Param nParam, GB_UINT32 dwParam)
 {
 	GVF_Decoder me = (GVF_Decoder)decoder;
-	if (nParam == GB_PARAM_CACHEITEM)
+	if (dwParam)
 	{
-		if (nParam)
+		if (nParam == GB_PARAM_CACHEITEM)
 		{
 			if (me->gpGreyBits)
 				return GB_FAILED;

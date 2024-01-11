@@ -118,7 +118,7 @@ GB_Decoder GreyCombineFile_Decoder_New(GB_Loader loader, GB_Stream stream)
 		decoder->gbLibrary = loader->gbLibrary;
 		decoder->gbMem = loader->gbMem;
 		decoder->gbStream = stream;
-		GreyBit_Memset_Sys(decoder->gbLoader, 0, sizeof(GB_Loader)*GCF_ITEM_MAX);
+		GB_MEMSET(decoder->gbLoader, 0, sizeof(GB_Loader)*GCF_ITEM_MAX);
 		GreyBit_Stream_Seek(decoder->gbStream, 0);
 		if (GreyBit_Stream_Read(decoder->gbStream, (GB_BYTE*)&decoder->gbFileHeader, sizeof(GREYCOMBINEFILEHEADER)) == sizeof(GREYCOMBINEFILEHEADER))
 		{

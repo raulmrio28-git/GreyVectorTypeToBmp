@@ -9,8 +9,6 @@
 GB_INT32 nCurrItemCount = 0;
 GB_UINT32 nOffset = 0;
 
-extern GBHANDLE GreyBitType_Creator_New_Memory(GBHANDLE library, void *pBuf, GB_INT32 nBufSize);
-
 GB_INT32 GreyCombineFile_Encoder_GetCount(GB_Encoder encoder)
 {
 	return nCurrItemCount;
@@ -123,7 +121,7 @@ GB_Encoder GreyCombineFile_Encoder_New(GB_Creator creator, GB_Stream stream)
 		codec->gbLibrary = creator->gbLibrary;
 		codec->gbMem = creator->gbMem;
 		codec->gbStream = stream;
-		GreyBit_Memset_Sys(codec->gbCreator, 0, sizeof(GB_Stream)*GCF_ITEM_MAX);
+		GB_MEMSET(codec->gbCreator, 0, sizeof(GB_Stream)*GCF_ITEM_MAX);
 	}
 	return (GB_Encoder)codec;
 }
