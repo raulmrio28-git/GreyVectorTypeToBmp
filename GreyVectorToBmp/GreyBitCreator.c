@@ -19,10 +19,10 @@ GB_Encoder GreyBitType_Creator_Probe(GB_Library library, GB_Creator creator)
 	{
 		if (GreyBit_Format_Probe(format, creator->gbStream))
 			return GreyBit_Format_EncoderNew(format, creator, creator->gbStream);
-		pExt = (GB_BYTE*)GB_STRRCHR(creator->gbStream->pfilename, '.');
+		pExt = (GB_BYTE*)GreyBit_Strrchr_Sys(creator->gbStream->pfilename, '.');
 		if (pExt)
 		{
-			if (!GB_STRCMP(pExt + 1, format->tag))
+			if (!GreyBit_Strcmp_Sys(pExt + 1, format->tag))
 				return (GB_Encoder)GreyBit_Format_EncoderNew(format, creator, creator->gbStream);
 		}
 		format = format->next;

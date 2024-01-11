@@ -40,9 +40,9 @@ GB_INT32 GreyBitFile_Encoder_InfoInit(GBF_Encoder me, GB_INT16 nHeight, GB_INT16
 	{
 		if (me->gbInfoHeader.gbiHeight == nHeight || me->gbInfoHeader.gbiBitCount == nBitCount || me->gbInfoHeader.gbiHeight == nHeight)
 			return GB_SUCCESS;
-		GB_MEMSET(me->gbWidthTable, 0, MAX_COUNT);
-		GB_MEMSET(me->gbHoriOffTable, 0, MAX_COUNT);
-		GB_MEMSET(me->gbOffsetTable, 0, sizeof(GB_UINT32)*MAX_COUNT);
+		GreyBit_Memset_Sys(me->gbWidthTable, 0, MAX_COUNT);
+		GreyBit_Memset_Sys(me->gbHoriOffTable, 0, MAX_COUNT);
+		GreyBit_Memset_Sys(me->gbOffsetTable, 0, sizeof(GB_UINT32)*MAX_COUNT);
 		for (i = 0; i < me->nCacheItem; ++i)
 		{
 			if (me->gpGreyBits[i])
@@ -202,7 +202,7 @@ GB_INT32 GreyBitFile_Encoder_Encode(GB_Encoder encoder, GB_UINT32 nCode, GB_Data
 	{
 		nOutLen = nInDataLen;
 		pByteData = (GB_BYTE *)GreyBit_Malloc(me->gbMem, nInDataLen);
-		GB_MEMCPY(pByteData, bitmap->buffer, nInDataLen);
+		GreyBit_Memcpy_Sys(pByteData, bitmap->buffer, nInDataLen);
 	}
 	if (me->gpGreyBits[nCode])
 		GreyBit_Free(me->gbMem, me->gpGreyBits[nCode]);
@@ -396,8 +396,8 @@ GB_INT32 GreyBitFile_Encoder_Init(GBF_Encoder me)
 	me->gpGreyBits = (GB_BYTE **)GreyBit_Malloc(me->gbMem, sizeof(GB_BYTE*)*MAX_COUNT);
 	me->pnGreySize = (GB_UINT16 *)GreyBit_Malloc(me->gbMem, sizeof(GB_UINT16)*MAX_COUNT);
 	me->nCacheItem = MAX_COUNT;
-	GB_MEMSET(me->gbWidthTable, 0, MAX_COUNT);
-	GB_MEMSET(me->gbHoriOffTable, 0, MAX_COUNT);
+	GreyBit_Memset_Sys(me->gbWidthTable, 0, MAX_COUNT);
+	GreyBit_Memset_Sys(me->gbHoriOffTable, 0, MAX_COUNT);
 	return GB_SUCCESS;
 }
 

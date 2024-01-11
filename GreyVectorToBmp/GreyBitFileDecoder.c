@@ -48,7 +48,7 @@ GB_INT32 GreyBitFile_Decoder_CaheItem(GBF_Decoder me, GB_UINT32 nCode, GB_BYTE *
 		return GB_FAILED;
 	me->gpGreyBits[me->nGreyBitsCount] = (GB_BYTE*)GreyBit_Malloc(me->gbMem, nDataSize);
 	me->pnGreySize[me->nGreyBitsCount] = (GB_INT16)nDataSize;
-	GB_MEMCPY(me->gpGreyBits[me->nGreyBitsCount], pData, nDataSize);
+	GreyBit_Memcpy_Sys(me->gpGreyBits[me->nGreyBitsCount], pData, nDataSize);
 	UnicodeSection_GetSectionInfo(UniIndex, &nMinCode, 0);
 	SectionIndex--;
 	SectionIndex += (GB_UINT16)nCode - nMinCode;
@@ -338,7 +338,7 @@ GB_INT32 GreyBitFile_Decoder_Decode(GB_Decoder decoder, GB_UINT32 nCode, GB_Data
 	if (me->gbInfoHeader.gbiCompression)
 		GreyBitFile_Decoder_Decompress(me->gbBitmap->buffer, &nDataLen, pByteData, nInDataLen);
 	else
-		GB_MEMCPY(me->gbBitmap->buffer, pByteData, nDataLen);
+		GreyBit_Memcpy_Sys(me->gbBitmap->buffer, pByteData, nDataLen);
 	if (pData)
 	{
 		pData->format = GB_FORMAT_BITMAP;

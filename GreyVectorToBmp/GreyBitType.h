@@ -115,6 +115,7 @@ extern void         GreyBitType_Outline_Done(GBHANDLE library, GB_Outline outlin
 #ifdef ENABLE_ENCODER
 // Creator
 extern GBHANDLE     GreyBitType_Creator_New(GBHANDLE library, const GB_CHAR* filepathname);
+//extern int          GreyBitType_Creator_SetParam(GBHANDLE creator, void *pParam);
 extern int          GreyBitType_Creator_SetParam(GBHANDLE creator, GB_Param nParam, GB_UINT32 dwParam);
 extern int          GreyBitType_Creator_DelChar(GBHANDLE creator, GB_UINT32 nCode);
 extern int          GreyBitType_Creator_SaveChar(GBHANDLE creator, GB_UINT32 nCode, GB_Data pData);
@@ -129,6 +130,7 @@ extern GBHANDLE     GreyBitType_Loader_New_Memory(GBHANDLE library, void *pBuf, 
 extern GB_INT32     GreyBitType_Loader_GetCount(GBHANDLE loader);
 extern GB_INT32     GreyBitType_Loader_GetHeight(GBHANDLE loader);
 extern int          GreyBitType_Loader_SetParam(GBHANDLE loader,  GB_Param nParam, GB_UINT32 dwParam);
+//extern int          GreyBitType_Loader_SetParam(GBHANDLE loader, void* pParam);
 extern GB_BOOL      GreyBitType_Loader_IsExist(GBHANDLE loader, GB_UINT32 nCode);
 extern void         GreyBitType_Loader_Done(GBHANDLE loader);
 

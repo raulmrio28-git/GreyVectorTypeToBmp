@@ -552,7 +552,7 @@ static int OEMFont_DrawText(IFont *pMe, BMP *pDst, int x, int y, const wchar_t *
 
 int main(int argc, char* argv[])
 {
-	wchar_t text[] = L"汉语考试（简体";
+	wchar_t text[] = L"Place your text here...";
 	BMP mybitmap;
 	mybitmap.width = 128;
 	mybitmap.height = 160;

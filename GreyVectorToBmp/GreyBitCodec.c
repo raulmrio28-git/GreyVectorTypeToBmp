@@ -28,12 +28,12 @@ GB_INT16	GreyBit_Decoder_GetAdvance(GB_Decoder decoder, GB_UINT32 nCode, GB_INT1
 
 GB_INT32	GreyBit_Decoder_Decode(GB_Decoder decoder, GB_UINT32 nCode, GB_Data pData, GB_INT16 nSize)
 {
-	return decoder->decode(decoder, nCode, pData, nSize);
+  return decoder->decode(decoder, nCode, pData, nSize);
 }
 
 void GreyBit_Decoder_Done(GB_Decoder decoder)
 {
-	decoder->done(decoder);
+  decoder->done(decoder);
 }
 
 #ifdef ENABLE_ENCODER
