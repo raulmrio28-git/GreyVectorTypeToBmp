@@ -128,14 +128,13 @@ CLEAN_UP:
 GB_INT32 GreyBit_Read_Sys(GB_IOHandler f, GB_BYTE *p, GB_INT32 size)
 {
 	GB_SysFile handle = (GB_SysFile)f;
-	fread((void*)p, size, 1, handle->fp);
-	return size;
+	return fread((void*)p, 1, size, handle->fp);
 }
 
 GB_INT32 GreyBit_Write_Sys(GB_IOHandler f, GB_BYTE *p, GB_INT32 size)
 {
 	GB_SysFile handle = (GB_SysFile)f;
-	return fwrite((void*)p, size, 1, handle->fp);
+	return fwrite((void*)p, 1, size, handle->fp);
 }
 
 GB_INT32 GreyBit_Seek_Sys(GB_IOHandler f, GB_INT32 pos)
