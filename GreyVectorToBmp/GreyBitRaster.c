@@ -161,6 +161,10 @@ typedef struct TRaster_
 
 #define ras  (*worker)
 
+#ifdef _MSC_VER
+#pragma warning( disable : 4244 4133 )
+#endif
+
 void gray_init_cells(RAS_ARG_ void *buffer, int byte_size)
 {
 	worker->buffer = buffer;
