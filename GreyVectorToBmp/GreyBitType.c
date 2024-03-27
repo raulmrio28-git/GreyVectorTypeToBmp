@@ -72,14 +72,14 @@ GB_Bitmap GreyBitType_Bitmap_New(GBHANDLE library, GB_INT16 nWidth, GB_INT16 nHe
 
 	nCurrPitch = (bitcount * 8 * nWidth + 63) >> 6;
 	nBufSize = nHeight * nCurrPitch;
-	bitmap = (GB_Bitmap)GreyBit_Malloc(me->gbMem, nBufSize + sizeof(GB_BitmapRec));
+	bitmap = (GB_Bitmap)GreyBit_Malloc(me->gbMem, sizeof(GB_BitmapRec));
 	if (bitmap)
 	{
 		bitmap->width = nWidth;
 		bitmap->height = nHeight;
 		bitmap->bitcount = bitcount;
 		bitmap->pitch = nCurrPitch;
-		bitmap->buffer = (GB_BYTE *)&bitmap[1];
+		bitmap->buffer = (GB_BYTE *)GreyBit_Malloc(me->gbMem, nBufSize);
 		if (!bitmap->buffer)
 		{
 			GreyBit_Free(me->gbMem, bitmap);
