@@ -554,9 +554,9 @@ End:
 	ras.last_ey = SUBPIXELS(ey2);
 }
 
-void gray_split_conic(RST_Vector* base)
+void gray_split_conic(GB_Vector* base)
 {
-	GB_Pos  a, b;
+	TPos  a, b;
 
 
 	base[4].x = base[2].x;
@@ -568,17 +568,17 @@ void gray_split_conic(RST_Vector* base)
 	base[4].y = base[2].y;
 	b = base[1].y;
 	a = base[3].y = (base[2].y + b) / 2;
-	b = base[1].y = (base[2].y + b) / 2;
+	b = base[1].y = (base[0].y + b) / 2;
 	base[2].y = (a + b) / 2;
 }
 
 void gray_render_conic(RAS_ARG_ const GB_Vector* control, const GB_Vector* to)
 {
-	GB_Pos      dx, dy;
-	GB_Pos      min, max, y;
+	TPos        dx, dy;
+	TPos        min, max, y;
 	int         top, level;
 	int*        levels;
-	RST_Vector* arc;
+	GB_Vector*  arc;
 
 
 	levels = ras.lev_stack;
@@ -643,9 +643,9 @@ void gray_render_conic(RAS_ARG_ const GB_Vector* control, const GB_Vector* to)
 	} while (top >= 0);
 }
 
-void gray_split_cubic(RST_Vector* base)
+void gray_split_cubic(GB_Vector* base)
 {
-	GB_Pos  a, b, c, d;
+	TPos  a, b, c, d;
 
 
 	base[6].x = base[3].x;
@@ -671,8 +671,8 @@ void gray_split_cubic(RST_Vector* base)
 
 void gray_render_cubic(RAS_ARG_ const GB_Vector* control1, const GB_Vector* control2, const GB_Vector* to)
 {
-	RST_Vector*  arc;
-	GB_Pos       min, max, y;
+	GB_Vector*  arc;
+	TPos        min, max, y;
 
 
 	arc = ras.bez_stack;
